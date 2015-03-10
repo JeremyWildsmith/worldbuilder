@@ -1,0 +1,20 @@
+{
+  "scale" : 1.0,
+  "animations" : [ {
+    "frames" : [ {
+      "region" : {
+        "height" : 260,
+        "width" : 42,
+        "y" : 0,
+        "x" : 0
+      },
+      "delay" : 1000,
+      "anchor" : {
+        "y" : 260,
+        "x" : 21
+      }
+    } ],
+    "name" : "entity"
+  } ],
+  "texture" : "entity.png"
+}

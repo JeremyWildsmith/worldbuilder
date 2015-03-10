@@ -1,0 +1,142 @@
+{
+  "style": "local:///ui/style/tech/tech.juis",
+  "bounds": {
+    "width": 1200,
+    "height": 630
+  },
+  "controls": [
+    {
+      "type": "worldView",
+      "name": "worldView",
+      "location": {
+        "x": 10,
+        "y": 70
+      },
+      "config": {
+        "bounds": {
+          "width": 1180,
+          "height": 550
+        }
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 10,
+        "y": 5
+      },
+      "config": {
+        "text": "Cursor Coordinates:"
+      }
+    },
+    {
+      "type": "label",
+      "name": "lblCursorCoordinates",
+      "location": {
+        "x": 110,
+        "y": 5
+      },
+      "config": {
+        "text": "0, 0, 0"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnAdjustDepth",
+      "location": {
+        "x": 250,
+        "y": 5
+      },
+      "config": {
+        "text": "Adjust Depth"
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 10,
+        "y": 20
+      },
+      "config": {
+        "text": "Traversable:"
+      }
+    },
+    {
+      "type": "label",
+      "name": "lblIsTraversable",
+      "location": {
+        "x": 70,
+        "y": 20
+      },
+      "config": {
+        "text": "false"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnClose",
+      "location": {
+        "x": 680,
+        "y": 5
+      },
+      "config": {
+        "text": "Close"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnSave",
+      "location": {
+        "x": 650,
+        "y": 5
+      },
+      "config": {
+        "text": "Save"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnApplyBrush",
+      "location": {
+        "x": 540,
+        "y": 20
+      },
+      "config": {
+        "text": "Apply Brush Mode"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnClearBrush",
+      "location": {
+        "x": 440,
+        "y": 20
+      },
+      "config": {
+        "text": "Clear Brush Mode"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnSampleBrush",
+      "location": {
+        "x": 330,
+        "y": 20
+      },
+      "config": {
+        "text": "Sample Brush Mode"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnCreateEntity",
+      "location": {
+        "x": 255,
+        "y": 20
+      },
+      "config": {
+        "text": "Create Entity"
+      }
+    }
+  ]
+}

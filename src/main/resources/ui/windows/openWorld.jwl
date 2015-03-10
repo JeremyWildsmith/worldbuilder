@@ -1,0 +1,66 @@
+{
+  "style": "local:///ui/style/tech/tech.juis",
+  "bounds": {
+    "width": 220,
+    "height": 130
+  },
+  "controls": [
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 10
+      },
+      "config": {
+        "text": "World"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtWorld",
+      "location": {
+        "x": 50,
+        "y": 10
+      },
+      "config": {
+        "bounds": {
+          "width": 125,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnBrowseWorld",
+      "location": {
+        "x": 180,
+        "y": 10
+      },
+      "config": {
+        "text": "Browse"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnCancel",
+      "location": {
+        "x": 80,
+        "y": 100
+      },
+      "config": {
+        "text": "Cancel"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnOkay",
+      "location": { 
+        "x": 115,
+        "y": 100
+      },
+      "config": {
+        "text": "Okay"
+      }
+    }
+  ]
+}

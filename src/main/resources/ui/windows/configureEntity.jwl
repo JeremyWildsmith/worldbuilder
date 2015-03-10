@@ -1,0 +1,198 @@
+{
+  "style": "local:///ui/style/tech/tech.juis",
+  "bounds": {
+    "width": 250,
+    "height": 410
+  },
+  "controls": [
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 10
+      },
+      "config": {
+        "text": "Name"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtName",
+      "location": {
+        "x": 50,
+        "y": 10
+      },
+      "config": {
+        "bounds": {
+          "width": 150,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 40
+      },
+      "config": {
+        "text": "Type Name"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtTypeName",
+      "location": {
+        "x": 70,
+        "y": 40
+      },
+      "config": {
+        "bounds": {
+          "width": 100,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 70
+      },
+      "config": {
+        "text": "Configuration"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtConfiguration",
+      "location": {
+        "x": 75,
+        "y": 70
+      },
+      "config": {
+        "bounds": {
+          "width": 130,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 100
+      },
+      "config": {
+        "text": "Direction (Xd, Yd)"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtDirection",
+      "location": {
+        "x": 100,
+        "y": 100
+      },
+      "config": {
+        "bounds": {
+          "width": 50,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 130
+      },
+      "config": {
+        "text": "Location (Xf, Yf, Zf)"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtLocation",
+      "location": {
+        "x": 110,
+        "y": 130
+      },
+      "config": {
+        "bounds": {
+          "width": 135,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 160
+      },
+      "config": {
+        "text": "Auxiliary Config"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtAuxConfig",
+      "location": {
+        "x": 10,
+        "y": 190
+      },
+      "config": {
+        "bounds": {
+          "width": 230,
+          "height": 180
+        },
+        "wordWrap" : false
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnApply",
+      "location": {
+        "x": 210,
+        "y": 385
+      },
+      "config": {
+        "text": "Apply"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnCancel",
+      "location": {
+        "x": 160,
+        "y": 385
+      },
+      "config": {
+        "text": "Cancel"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnDelete",
+      "location": {
+        "x": 120,
+        "y": 385
+      },
+      "config": {
+        "text": "Delete"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnBrowse",
+      "location": {
+        "x": 210,
+        "y": 70
+      },
+      "config": {
+        "text": "Browse"
+      }
+    }
+  ]
+}

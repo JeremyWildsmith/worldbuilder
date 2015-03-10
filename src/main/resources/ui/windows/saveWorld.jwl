@@ -1,0 +1,101 @@
+{
+  "style": "local:///ui/style/tech/tech.juis",
+  "bounds": {
+    "width": 305,
+    "height": 115
+  },
+  "controls": [
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 10
+      },
+      "config": {
+        "text": "Base Directory"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtBase",
+      "location": {
+        "x": 100,
+        "y": 10
+      },
+      "config": {
+        "bounds": {
+          "width": 150,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 40
+      },
+      "config": {
+        "text": "Save Location"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtWorld",
+      "location": {
+        "x": 100,
+        "y": 40
+      },
+      "config": {
+        "bounds": {
+          "width": 150,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnBrowseBase",
+      "location": {
+        "x": 255,
+        "y": 15
+      },
+      "config": {
+        "text": "Browse"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnBrowseWorld",
+      "location": {
+        "x": 255,
+        "y": 40
+      },
+      "config": {
+        "text": "Browse"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnOkay",
+      "location": {
+        "x": 165,
+        "y": 85
+      },
+      "config": {
+        "text": "Okay"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnCancel",
+      "location": {
+        "x": 120,
+        "y": 85
+      },
+      "config": {
+        "text": "Cancel"
+      }
+    }
+  ]
+}

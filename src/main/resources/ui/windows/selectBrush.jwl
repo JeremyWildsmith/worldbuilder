@@ -1,0 +1,137 @@
+{
+  "style": "local:///ui/style/tech/tech.juis",
+  "bounds": {
+    "width": 255,
+    "height": 160
+  },
+  "controls": [
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 10
+      },
+      "config": {
+        "text": "Model"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtModel",
+      "location": {
+        "x": 60,
+        "y": 10
+      },
+      "config": {
+        "bounds": {
+          "width": 150,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 70
+      },
+      "config": {
+        "text": "Size"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtSize",
+      "location": {
+        "x": 45,
+        "y": 70
+      },
+      "config": {
+        "bounds": {
+          "width": 50,
+          "height": 20
+        },
+        "text": "1"
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 40
+      },
+      "config": {
+        "text": "Direction (Xd, Yd)"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtDirection",
+      "location": {
+        "x": 100,
+        "y": 40
+      },
+      "config": {
+        "bounds": {
+          "width": 50,
+          "height": 20
+        },
+        "text": "1, 1"
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 100
+      },
+      "config": {
+        "text": "Traversable"
+      }
+    },
+    {
+      "type": "checkbox",
+      "name": "chkIsTraversable",
+      "location": {
+        "x": 75,
+        "y": 104
+      },
+      "config": {
+        "value": true
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnBrowseModel",
+      "location": {
+        "x": 215,
+        "y": 15
+      },
+      "config": {
+        "text": "Browse"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnApply",
+      "location": {
+        "x": 130,
+        "y": 130
+      },
+      "config": {
+        "text": "Apply"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnClose",
+      "location": {
+        "x": 80,
+        "y": 130
+      },
+      "config": {
+        "text": "Close"
+      }
+    }
+  ]
+}

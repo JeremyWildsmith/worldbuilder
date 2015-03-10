@@ -1,0 +1,103 @@
+{
+  "style": "local:///ui/style/tech/tech.juis",
+  "bounds": {
+    "width": 150,
+    "height": 180
+  },
+  "controls": [
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 10
+      },
+      "config": {
+        "text": "Width"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtWidth",
+      "location": {
+        "x": 50,
+        "y": 10
+      },
+      "config": {
+        "bounds": {
+          "width": 50,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 40
+      },
+      "config": {
+        "text": "Height"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtHeight",
+      "location": {
+        "x": 50,
+        "y": 40
+      },
+      "config": {
+        "bounds": {
+          "width": 50,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 130
+      },
+      "config": {
+        "text": "Friction"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtFriction",
+      "location": {
+        "x": 70,
+        "y": 130
+      },
+      "config": {
+        "bounds": {
+          "width": 50,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnCancel",
+      "location": {
+        "x": 80,
+        "y": 160
+      },
+      "config": {
+        "text": "Cancel"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnOkay",
+      "location": {
+        "x": 115,
+        "y": 160
+      },
+      "config": {
+        "text": "Okay"
+      }
+    }
+  ]
+}
