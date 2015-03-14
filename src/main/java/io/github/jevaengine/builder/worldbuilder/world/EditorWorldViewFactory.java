@@ -313,7 +313,37 @@ public class EditorWorldViewFactory
 								{
 									Vector3F cursorLocation = m_camera.getLookAt();
 									cursorLocation.z = Float.parseFloat(input);
-									m_camera.lookAt(cursorLocation);;
+									m_camera.lookAt(cursorLocation);
+									query.dispose();
+								} catch(NumberFormatException e)
+								{
+									displayMessage("Depth must be a properly formed floating point.");
+								}
+							}
+							@Override
+							public void cancel() {
+								query.dispose();
+							}
+						});
+					} catch (WindowConstructionException e) {
+						m_logger.error("Unable to construct text input dialogue for depth adjust", e);
+					}
+				}
+			});
+			
+			getControl(Button.class, "btnAdjustZoom").getObservers().add(new IButtonPressObserver() {
+				@Override
+				public void onPress()
+				{
+					try {
+						final TextInputQuery query = new TextInputQueryFactory(m_windowManager, m_windowFactory).create("Cursor Depth", Float.toString(m_world.getCursor().getLocation().z));
+						query.getObservers().add(new ITextInputQueryObserver() {			
+							@Override
+							public void okay(String input)
+							{
+								try
+								{
+									m_camera.setZoom(Float.parseFloat(input));
 									query.dispose();
 								} catch(NumberFormatException e)
 								{

@@ -52,6 +52,17 @@
       }
     },
     {
+      "type": "button",
+      "name": "btnAdjustZoom",
+      "location": {
+        "x": 320,
+        "y": 5
+      },
+      "config": {
+        "text": "Adjust Zoom"
+      }
+    },
+    {
       "type": "label",
       "location": {
         "x": 10,
