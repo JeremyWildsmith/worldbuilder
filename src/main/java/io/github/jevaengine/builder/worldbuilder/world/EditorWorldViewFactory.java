@@ -19,6 +19,7 @@ import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQueryFactory.ISel
 import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQueryFactory.SelectBrushQuery;
 import io.github.jevaengine.builder.worldbuilder.world.Brush.IBrushBehaviorObserver;
 import io.github.jevaengine.builder.worldbuilder.world.EditorEntity.DummyEntity;
+import io.github.jevaengine.builder.worldbuilder.world.MoveEntityBrush.IEntityMovementHandler;
 import io.github.jevaengine.builder.worldbuilder.world.SampleBrushBehaviour.IBrushSampleHandler;
 import io.github.jevaengine.config.ValueSerializationException;
 import io.github.jevaengine.config.json.JsonVariable;
@@ -145,6 +146,8 @@ public class EditorWorldViewFactory
 	
 	private class EditorWorldViewBehaviourInjector extends WindowBehaviourInjector
 	{
+		
+		private final Brush m_workingBrush = new Brush();
 		private final EditorWorld m_world;
 		private final ControlledCamera m_camera;
 		private final ISceneModelFactory m_modelFactory;
@@ -177,6 +180,26 @@ public class EditorWorldViewFactory
 			{
 				m_logger.error("Unable to construct message dialogue", e);
 			}
+		}
+		
+		private void moveEntity(final EditorEntity entity, final IEntityMovementHandler handler)
+		{
+			m_camera.lookAt(entity.getLocation());
+			m_workingBrush.setBehaviour(new MoveEntityBrush(entity, new MoveEntityBrush.IEntityMovementHandler() {
+				@Override
+				public void moved() {
+					m_workingBrush.setBehaviour(new NullBrushBehaviour());
+					handler.moved();
+				}
+			}));
+		}
+		
+		private void moveEntity(final EditorEntity entity)
+		{
+			moveEntity(entity, new IEntityMovementHandler() {
+				@Override
+				public void moved() { }
+			});
 		}
 		
 		private void createEntity(final EditorEntity base)
@@ -212,8 +235,6 @@ public class EditorWorldViewFactory
 		@Override
 		protected void doInject() throws NoSuchControlException
 		{
-			final Brush workingBrush = new Brush();
-			
 			final Timer logicTimer = new Timer();
 			final WorldView worldView = getControl(WorldView.class, "worldView");
 			final Label lblCursorCoordinates = getControl(Label.class, "lblCursorCoordinates");
@@ -229,7 +250,7 @@ public class EditorWorldViewFactory
 			worldView.getObservers().add(cameraController);
 			getObservers().add(cameraController);
 
-			SelectionController selectionController = new SelectionController(m_world, workingBrush);
+			SelectionController selectionController = new SelectionController(m_world, m_workingBrush);
 			getObservers().add(selectionController);
 			logicTimer.getObservers().add(selectionController);
 			
@@ -252,30 +273,39 @@ public class EditorWorldViewFactory
 				@Override
 				public void mouseEvent(InputMouseEvent event)
 				{
-					if(event.type != MouseEventType.MouseClicked || event.mouseButton != MouseButton.Right)
+					if(event.type != MouseEventType.MouseClicked)
 						return;
 					
 					final Vector2D location = event.location;
 					final DummyEntity pickedEntity = worldView.pick(DummyEntity.class, location);
-					String options[] = pickedEntity == null ? new String[] {"Create Entity"} : new String[] {"Configure Entity"};
-					menuStrip.setContext(options, new IMenuStripListener() {
-						@Override
-						public void onCommand(String command)
-						{
-							if(command.equals("Create Entity"))
-							{
-								EditorEntity base = new EditorEntity(m_fontFactory, m_modelFactory, "Unnamed", "");
-								base.setLocation(new Vector3F(worldView.translateScreenToWorld(new Vector2F(location)), m_camera.getLookAt().z));
-								createEntity(base);
-							}
-						}
-					});
 					
-					menuStrip.setLocation(location.add(worldView.getLocation()));
+					if(event.mouseButton == MouseButton.Right)
+					{
+						String options[] = pickedEntity == null ? new String[] {"Create Entity"} : new String[] {"Configure Entity", "Move Entity"};
+						menuStrip.setContext(options, new IMenuStripListener() {
+							@Override
+							public void onCommand(String command)
+							{
+								if(command.equals("Create Entity"))
+								{
+									EditorEntity base = new EditorEntity(m_fontFactory, m_modelFactory, "Unnamed", "");
+									base.setLocation(new Vector3F(worldView.translateScreenToWorld(new Vector2F(location)), m_camera.getLookAt().z));
+									createEntity(base);
+								} else if(command.equals("Move Entity"))
+								{
+									moveEntity(pickedEntity.getEditorEntity());
+								}
+							}
+						});
+
+						menuStrip.setLocation(location.add(worldView.getLocation()));
+					}else
+						menuStrip.setVisible(false);
+					
 				}
 			});
 			
-			workingBrush.getObservers().add(new IBrushBehaviorObserver() {
+			m_workingBrush.getObservers().add(new IBrushBehaviorObserver() {
 				@Override
 				public void behaviourChanged(IBrushBehaviour behaviour) {
 					m_world.getCursor().setModel(behaviour.getModel());
@@ -366,7 +396,7 @@ public class EditorWorldViewFactory
 				public void onPress() {
 					try
 					{
-						final SelectBrushQuery query = new SelectBrushQueryFactory(m_windowManager, m_windowFactory, m_modelFactory, m_baseDirectory).create(workingBrush);
+						final SelectBrushQuery query = new SelectBrushQueryFactory(m_windowManager, m_windowFactory, m_modelFactory, m_baseDirectory).create(m_workingBrush);
 						query.getObservers().add(new ISelectBrushQueryObserver() {
 							@Override
 							public void close() {
@@ -383,20 +413,20 @@ public class EditorWorldViewFactory
 			getControl(Button.class, "btnClearBrush").getObservers().add(new IButtonPressObserver() {
 				@Override
 				public void onPress() {
-					workingBrush.setBehaviour(new ClearTileBrushBehaviour());
+					m_workingBrush.setBehaviour(new ClearTileBrushBehaviour());
 				}
 			});
 			
 			getControl(Button.class, "btnSampleBrush").getObservers().add(new IButtonPressObserver() {
 				@Override
 				public void onPress() {
-					workingBrush.setBehaviour(new SampleBrushBehaviour(new IBrushSampleHandler() {
+					m_workingBrush.setBehaviour(new SampleBrushBehaviour(new IBrushSampleHandler() {
 						@Override
 						public void sample(EditorSceneArtifact sample) {
-							workingBrush.setBehaviour(new NullBrushBehaviour());
+							m_workingBrush.setBehaviour(new NullBrushBehaviour());
 							try
 							{
-								final SelectBrushQuery query = new SelectBrushQueryFactory(m_windowManager, m_windowFactory, m_modelFactory, m_baseDirectory).create(workingBrush, sample);
+								final SelectBrushQuery query = new SelectBrushQueryFactory(m_windowManager, m_windowFactory, m_modelFactory, m_baseDirectory).create(m_workingBrush, sample);
 								query.getObservers().add(new ISelectBrushQueryObserver() {
 									@Override
 									public void close() {
