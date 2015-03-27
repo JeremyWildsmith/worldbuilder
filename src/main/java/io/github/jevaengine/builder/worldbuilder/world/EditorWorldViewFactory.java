@@ -352,6 +352,7 @@ public class EditorWorldViewFactory
 				JsonVariable var = new JsonVariable();
 				var.setValue(config);
 				var.serialize(fos, true);
+				displayMessage("World has been saved successfully.");
 			} catch (IOException | ValueSerializationException e)
 			{
 				m_logger.error("Unable to save world", e);
