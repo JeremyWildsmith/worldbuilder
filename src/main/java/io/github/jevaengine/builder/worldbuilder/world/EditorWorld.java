@@ -2,7 +2,10 @@ package io.github.jevaengine.builder.worldbuilder.world;
 
 import io.github.jevaengine.builder.worldbuilder.world.EditorEntity.DummyEntity;
 import io.github.jevaengine.builder.worldbuilder.world.EditorSceneArtifact.DummySceneArtifact;
+import io.github.jevaengine.builder.worldbuilder.world.EditorZone.DummyZone;
+import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.math.Rect2D;
+import io.github.jevaengine.math.Rect3F;
 import io.github.jevaengine.math.Vector2D;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.util.IObserverRegistry;
@@ -12,6 +15,7 @@ import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.ArtifactPlane;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.EntityImportDeclaration;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.SceneArtifactDeclaration;
+import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.ZoneDeclaration;
 import io.github.jevaengine.world.World;
 import io.github.jevaengine.world.entity.IEntity;
 import io.github.jevaengine.world.entity.IEntityTaskModel;
@@ -27,20 +31,23 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class EditorWorld
 {
-	private World m_world;
+	private final World m_world;
 	
-	private WorldCursor m_worldCursor;
-	private ArrayList<EditorEntity> m_entities = new ArrayList<>();
-	private HashMap<TileLocation, EditorSceneArtifact> m_tiles = new HashMap<>();
-
+	private final WorldCursor m_worldCursor;
+	private final ArrayList<EditorEntity> m_entities = new ArrayList<>();
+	private final ArrayList<EditorZone> m_zones = new ArrayList<>();
+	private final HashMap<TileLocation, EditorSceneArtifact> m_tiles = new HashMap<>();
+	
+	private float m_maxFrictionForce = 0;
+	
 	private String m_script = "";
-	private float m_maxFrictionForce;
 	
-	protected EditorWorld(World world)
+	protected EditorWorld(World world, IFontFactory fontFactory)
 	{
 		m_maxFrictionForce = world.getPhysicsWorld().getMaxFrictionForce();
 		m_world = world;
@@ -52,6 +59,18 @@ public final class EditorWorld
 				m_tiles.put(new TileLocation(e.getBody().getLocation()), ((DummySceneArtifact)e).getEditorTile());
 			else if(e instanceof DummyEntity)
 				m_entities.add(((DummyEntity)e).getEditorEntity());
+		}
+		
+		for(Map.Entry<String, Rect3F> zone : world.getZones().entrySet())
+		{
+			Rect3F bounds = zone.getValue();
+			
+			EditorZone editorZone = new EditorZone(fontFactory, zone.getKey());
+			editorZone.setLocation(bounds.getPoint(0, 0, 0));
+			editorZone.setBounds(new Rect3F(0, 0, 0, bounds.width, bounds.height, bounds.depth));
+			
+			m_world.addEntity(editorZone.getEntity());
+			m_zones.add(editorZone);
 		}
 	}
 
@@ -75,6 +94,26 @@ public final class EditorWorld
 		return m_worldCursor;
 	}
 	
+	public float getFriction()
+	{
+		return m_maxFrictionForce;
+	}
+	
+	public void setFriction(float maxFrictionForce)
+	{
+		m_maxFrictionForce = maxFrictionForce;
+	}
+	
+	public List<EditorEntity> getEntities()
+	{
+		return new ArrayList<>(m_entities);
+	}
+	
+	public List<EditorZone> getZones()
+	{
+		return new ArrayList<>(m_zones);
+	}
+	
 	public void addEntity(EditorEntity e)
 	{
 		m_entities.add(e);
@@ -87,6 +126,18 @@ public final class EditorWorld
 		m_world.removeEntity(e.getEntity());
 	}
 
+	public void addZone(EditorZone zone)
+	{
+		m_zones.add(zone);
+		m_world.addEntity(zone.getEntity());
+	}
+	
+	public void removeZone(EditorZone zone)
+	{
+		m_zones.remove(zone);
+		m_world.removeEntity(zone.getEntity());
+	}
+	
 	public void setTile(@Nullable EditorSceneArtifact t, Vector3F location)
 	{
 		TileLocation tileLocation = getBoundedTileLocation(location);
@@ -228,6 +279,16 @@ public final class EditorWorld
 		hostConfiguration.entities = entities.toArray(new EntityImportDeclaration[entities.size()]);
 	}
 	
+	private void serializeZones(WorldConfiguration hostConfiguration)
+	{
+		ArrayList<ZoneDeclaration> zones = new ArrayList<>();
+		
+		for(EditorZone z : m_zones)
+			zones.add(z.createZoneDeclaration());
+		
+		hostConfiguration.zones = zones.toArray(new ZoneDeclaration[zones.size()]);
+	}
+	
 	public WorldConfiguration createWorldConfiguration()
 	{
 		WorldConfiguration configuration = new WorldConfiguration();
@@ -240,6 +301,7 @@ public final class EditorWorld
 			configuration.script = m_script;
 		
 		serializeEntities(configuration);
+		serializeZones(configuration);
 		serializeTiledLayers(configuration);
 		
 		return configuration;

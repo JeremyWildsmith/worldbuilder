@@ -15,11 +15,15 @@ import io.github.jevaengine.builder.worldbuilder.ui.ConfigureEntityQueryFactory;
 import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQueryFactory;
 import io.github.jevaengine.builder.worldbuilder.ui.ConfigureEntityQueryFactory.ConfigureEntityQuery;
 import io.github.jevaengine.builder.worldbuilder.ui.ConfigureEntityQueryFactory.IConfigureEntityQueryObserver;
+import io.github.jevaengine.builder.worldbuilder.ui.ConfigureZoneQueryFactory;
+import io.github.jevaengine.builder.worldbuilder.ui.ConfigureZoneQueryFactory.ConfigureZoneQuery;
+import io.github.jevaengine.builder.worldbuilder.ui.ConfigureZoneQueryFactory.IConfigureZoneQueryObserver;
 import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQueryFactory.ISelectBrushQueryObserver;
 import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQueryFactory.SelectBrushQuery;
 import io.github.jevaengine.builder.worldbuilder.world.Brush.IBrushBehaviorObserver;
 import io.github.jevaengine.builder.worldbuilder.world.EditorEntity.DummyEntity;
-import io.github.jevaengine.builder.worldbuilder.world.MoveEntityBrush.IEntityMovementHandler;
+import io.github.jevaengine.builder.worldbuilder.world.EditorZone.DummyZone;
+import io.github.jevaengine.builder.worldbuilder.world.ResizeZoneBrushBehaviour.IResizeZoneBrushBehaviourHandler;
 import io.github.jevaengine.builder.worldbuilder.world.SampleBrushBehaviour.IBrushSampleHandler;
 import io.github.jevaengine.config.ValueSerializationException;
 import io.github.jevaengine.config.json.JsonVariable;
@@ -51,6 +55,7 @@ import io.github.jevaengine.ui.WindowManager;
 import io.github.jevaengine.ui.WorldView;
 import io.github.jevaengine.ui.WorldView.IWorldViewInputObserver;
 import io.github.jevaengine.util.IObserverRegistry;
+import io.github.jevaengine.util.Nullable;
 import io.github.jevaengine.util.Observers;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration;
 import io.github.jevaengine.world.World;
@@ -63,6 +68,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -182,32 +191,68 @@ public class EditorWorldViewFactory
 			}
 		}
 		
-		private void moveEntity(final EditorEntity entity, final IEntityMovementHandler handler)
+		private void moveEntity(final IEntity entity)
 		{
-			m_camera.lookAt(entity.getLocation());
-			m_workingBrush.setBehaviour(new MoveEntityBrush(entity, new MoveEntityBrush.IEntityMovementHandler() {
+			m_camera.lookAt(entity.getBody().getLocation());
+			m_workingBrush.setBehaviour(new MoveEntityBrushBehaviour(entity, new MoveEntityBrushBehaviour.IEntityMovementBrushBehaviorHandler() {
 				@Override
 				public void moved() {
 					m_workingBrush.setBehaviour(new NullBrushBehaviour());
-					handler.moved();
 				}
 			}));
 		}
 		
-		private void moveEntity(final EditorEntity entity)
+		private void resizeZone(final EditorZone zone)
 		{
-			moveEntity(entity, new IEntityMovementHandler() {
+			Vector3F bottomRightTop = zone.getBounds().getPoint(1.0F, 1.0F, 1.0F).add(zone.getLocation());
+			m_camera.lookAt(bottomRightTop);
+			m_workingBrush.setBehaviour(new ResizeZoneBrushBehaviour(zone, new IResizeZoneBrushBehaviourHandler() {
 				@Override
-				public void moved() { }
-			});
+				public void resized() {
+					m_workingBrush.setBehaviour(new NullBrushBehaviour());
+				}
+			}));
 		}
 		
-		private void createEntity(final EditorEntity base)
+		@Nullable
+		private ConfigureZoneQuery configureZone(final EditorZone base)
+		{
+			try
+			{
+				final ConfigureZoneQuery query = new ConfigureZoneQueryFactory(m_windowManager, m_windowFactory, m_baseDirectory).create(base);
+				query.getObservers().add(new IConfigureZoneQueryObserver() {
+					@Override
+					public void delete() {
+						m_world.removeZone(base);
+						query.dispose();
+					}
+							
+					@Override
+					public void cancel() {
+						query.dispose();
+					}
+							
+					@Override
+					public void apply() {
+						query.dispose();
+					}
+				});
+				
+				return query;
+			} catch (WindowConstructionException e)
+			{
+				m_logger.error("Unable to construct zone configuration dialogue.", e);
+				
+				return null;
+			}
+		}
+		
+		@Nullable
+		private ConfigureEntityQuery configureEntity(final EditorEntity base)
 		{		
 			try
 			{
 				final ConfigureEntityQuery query = new ConfigureEntityQueryFactory(m_windowManager, m_windowFactory, m_baseDirectory).create(base);
-				m_world.addEntity(base);
 				query.getObservers().add(new IConfigureEntityQueryObserver() {
 					@Override
 					public void delete() {
@@ -217,7 +262,6 @@ public class EditorWorldViewFactory
 							
 					@Override
 					public void cancel() {
-						m_world.removeEntity(base);
 						query.dispose();
 					}
 							
@@ -226,10 +270,173 @@ public class EditorWorldViewFactory
 						query.dispose();
 					}
 				});
+				
+				return query;
 			} catch (WindowConstructionException e)
 			{
 				m_logger.error("Unable to construct entity configuration dialogue.", e);
+				return null;
 			}			
+		}
+		
+		private void displayContextMenu(MenuStrip menuStrip, final DummyEntity entity)
+		{
+			menuStrip.setContext(new String[] {"Move Entity", "Configure Entity"}, new IMenuStripListener() {
+				@Override
+				public void onCommand(String command)
+				{
+					switch (command)
+					{
+						case "Move Entity":
+							moveEntity(entity);
+							break;
+						case "Configure Entity":
+							configureEntity(entity.getEditorEntity());
+							break;
+					}
+				}
+			});			
+		}
+		
+		private void displayContextMenu(MenuStrip menuStrip, final DummyZone zone)
+		{
+			menuStrip.setContext(new String[] {"Move Zone", "Edit Zone", "Resize Zone"}, new IMenuStripListener() {
+				@Override
+				public void onCommand(String command)
+				{
+					switch (command) 
+					{
+						case "Move Zone":
+							moveEntity(zone);
+							break;
+						case "Edit Zone":
+							configureZone(zone.getEditorEntity());
+							break;
+						case "Resize Zone":
+							resizeZone(zone.getEditorEntity());
+							break;
+					}
+				}
+			});
+		}
+		
+		private void displayDefaultContextMenu(final WorldView worldView, final Vector2D location, MenuStrip menuStrip)
+		{
+			menuStrip.setContext(new String[] {"Create Entity", "Create Zone"}, new IMenuStripListener() {
+				@Override
+				public void onCommand(String command)
+				{
+					if(command.equals("Create Entity"))
+					{
+						EditorEntity base = createUnnamedEntity();
+						base.setLocation(new Vector3F(worldView.translateScreenToWorld(new Vector2F(location)), m_camera.getLookAt().z));
+						m_world.addEntity(base);
+						configureEntity(base);
+					}else if(command.equals("Create Zone"))
+					{
+						EditorZone base = createUnnamedZone();
+						base.setLocation(new Vector3F(worldView.translateScreenToWorld(new Vector2F(location)), m_camera.getLookAt().z));
+						m_world.addZone(base);
+						configureZone(base);
+					}
+				}
+			});
+		}
+		
+		private void saveWorld(URI destination)
+		{
+			WorldConfiguration config = m_world.createWorldConfiguration();
+			
+			try(FileOutputStream fos = new FileOutputStream(new File(destination)))
+			{
+				JsonVariable var = new JsonVariable();
+				var.setValue(config);
+				var.serialize(fos, true);
+			} catch (IOException | ValueSerializationException e)
+			{
+				m_logger.error("Unable to save world", e);
+				displayMessage("Error occured attmepting to save world. View log for more details.");
+			}
+		}
+		
+		private void showEntityNameConflict(EditorEntity a, EditorEntity b)
+		{
+			ConfigureEntityQuery q = configureEntity(a);
+			configureEntity(b);
+			
+			if(q != null)
+				q.setLocation(q.getLocation().add(new Vector2D(-5, -5)));
+		}
+		
+		private void showZoneNameConflict(EditorZone a, EditorZone b)
+		{
+			ConfigureZoneQuery q = configureZone(a);
+			configureZone(b);
+			
+			if(q != null)
+				q.setLocation(q.getLocation().add(new Vector2D(-5, -5)));
+		}
+		
+		private void verifyAndSaveWorld(URI destination)
+		{
+			Map<String, EditorEntity> usedEntityNames = new HashMap<>();
+			Map<String, EditorZone> usedZoneNames = new HashMap<>();
+			
+			final String message = "Due to a %s name conflict with the name '%s', the world could not be saved. Please resolve this issue before attempting to save again.";
+			
+			for(EditorEntity e : m_world.getEntities())
+			{
+				if(usedEntityNames.containsKey(e.getName()))
+				{
+					showEntityNameConflict(e, usedEntityNames.get(e.getName()));
+					displayMessage(String.format(message, "entity", e.getName()));
+					return;
+				}else
+					usedEntityNames.put(e.getName(), e);
+			}
+			
+			for(EditorZone z : m_world.getZones())
+			{
+				if(usedZoneNames.containsKey(z.getName()))
+				{
+					showZoneNameConflict(z, usedZoneNames.get(z.getName()));
+					displayMessage(String.format(message, "zone", z.getName()));
+					return;
+				}else
+					usedZoneNames.put(z.getName(), z);
+			}
+			
+			saveWorld(destination);
+		}
+		
+		private EditorEntity createUnnamedEntity()
+		{
+			Set<String> usedNames = new HashSet<>();
+			
+			for(EditorEntity e : m_world.getEntities())
+				usedNames.add(e.getName());
+			
+			for(int i = 0; ; i++)
+			{
+				String name = "Unnamed" + i;
+				if(!usedNames.contains(name))
+					return new EditorEntity(m_fontFactory, m_modelFactory, name, "");
+			}
+		}
+		
+		private EditorZone createUnnamedZone()
+		{
+			Set<String> usedNames = new HashSet<>();
+			
+			for(EditorZone z : m_world.getZones())
+				usedNames.add(z.getName());
+			
+			for(int i = 0; ; i++)
+			{
+				String name = "Unnamed" + i;
+				if(!usedNames.contains(name))
+					return new EditorZone(m_fontFactory, name);
+			}
 		}
 		
 		@Override
@@ -277,31 +484,20 @@ public class EditorWorldViewFactory
 						return;
 					
 					final Vector2D location = event.location;
-					final DummyEntity pickedEntity = worldView.pick(DummyEntity.class, location);
+					final IEntity pickedEntity = worldView.pick(IEntity.class, location);
 					
 					if(event.mouseButton == MouseButton.Right)
 					{
-						String options[] = pickedEntity == null ? new String[] {"Create Entity"} : new String[] {"Configure Entity", "Move Entity"};
-						menuStrip.setContext(options, new IMenuStripListener() {
-							@Override
-							public void onCommand(String command)
-							{
-								if(command.equals("Create Entity"))
-								{
-									EditorEntity base = new EditorEntity(m_fontFactory, m_modelFactory, "Unnamed", "");
-									base.setLocation(new Vector3F(worldView.translateScreenToWorld(new Vector2F(location)), m_camera.getLookAt().z));
-									createEntity(base);
-								} else if(command.equals("Move Entity"))
-								{
-									moveEntity(pickedEntity.getEditorEntity());
-								}
-							}
-						});
-
+						if(pickedEntity instanceof DummyEntity)
+							displayContextMenu(menuStrip, (DummyEntity)pickedEntity);
+						else if(pickedEntity instanceof DummyZone)
+							displayContextMenu(menuStrip, (DummyZone)pickedEntity);
+						else
+							displayDefaultContextMenu(worldView, location, menuStrip);
+						
 						menuStrip.setLocation(location.add(worldView.getLocation()));
 					}else
 						menuStrip.setVisible(false);
-					
 				}
 			});
 			
@@ -316,8 +512,9 @@ public class EditorWorldViewFactory
 				@Override
 				public void onPress() {
 					
-					final EditorEntity base = new EditorEntity(m_fontFactory, m_modelFactory, "Unnamed", "");
-					createEntity(base);
+					final EditorEntity base = createUnnamedEntity();
+					m_world.addEntity(base);
+					configureEntity(base);
 				}
 			});
 			
@@ -451,26 +648,15 @@ public class EditorWorldViewFactory
 						query.getObservers().add(new IFileInputQueryObserver() {
 							
 							@Override
-							public void okay(URI input) {
-								WorldConfiguration config = m_world.createWorldConfiguration();
-								
-								try(FileOutputStream fos = new FileOutputStream(new File(input)))
-								{
-									JsonVariable var = new JsonVariable();
-									var.setValue(config);
-									var.serialize(fos, true);
-								} catch (IOException | ValueSerializationException e)
-								{
-									m_logger.error("Unable to save world", e);
-									displayMessage("Error occured attmepting to save world. View log for more details.");
-								} finally
-								{
-									query.dispose();
-								}
+							public void okay(URI input)
+							{
+								verifyAndSaveWorld(input);
+								query.dispose();
 							}
 							
 							@Override
-							public void cancel() {
+							public void cancel()
+							{
 								query.dispose();
 							}
 						});
@@ -560,38 +746,6 @@ public class EditorWorldViewFactory
 				
 				if(tile != null)
 					m_camera.lookAt(tile.getBody().getLocation());
-				
-				if(tile instanceof EditorEntity.DummyEntity)
-				{
-					final EditorEntity editorEntity = ((EditorEntity.DummyEntity)tile).getEditorEntity();
-					
-					try
-					{
-						final ConfigureEntityQuery query = new ConfigureEntityQueryFactory(m_windowManager, m_windowFactory, m_baseDirectory).create(editorEntity);
-					
-						query.getObservers().add(new IConfigureEntityQueryObserver() {
-							@Override
-							public void delete() {
-								m_world.removeEntity(editorEntity);
-								query.dispose();
-							}
-							
-							@Override
-							public void cancel() {
-								query.dispose();
-							}
-							
-							@Override
-							public void apply() {
-								query.dispose();
-							}
-						});
-					
-					} catch (WindowConstructionException e)
-					{
-						m_logger.error("Unable to construct entity configuration dialogue", e);
-					}
-				}
 			}
 		}
 	}

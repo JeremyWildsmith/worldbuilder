@@ -130,7 +130,7 @@ public final class FloatingToolbarFactory
 		{
 			try
 			{
-				final EditorWorldView worldView = new EditorWorldViewFactory(m_windowManager, m_windowFactory, m_sceneBufferFactory, m_modelFactory, m_fontFactory, m_baseDirectory).create(new EditorWorld(world));
+				final EditorWorldView worldView = new EditorWorldViewFactory(m_windowManager, m_windowFactory, m_sceneBufferFactory, m_modelFactory, m_fontFactory, m_baseDirectory).create(new EditorWorld(world, m_fontFactory));
 			
 				worldView.getObservers().add(new IEditorWorldViewObserver() {
 					@Override
