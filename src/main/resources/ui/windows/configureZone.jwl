@@ -1,0 +1,114 @@
+{
+  "style": "local:///ui/style/tech/tech.juis",
+  "bounds": {
+    "width": 250,
+    "height": 130
+  },
+  "controls": [
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 10
+      },
+      "config": {
+        "text": "Name"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtName",
+      "location": {
+        "x": 50,
+        "y": 10
+      },
+      "config": {
+        "bounds": {
+          "width": 145,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 40
+      },
+      "config": {
+        "text": "Bounds (w, h, d)"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtBounds",
+      "location": {
+        "x": 100,
+        "y": 40
+      },
+      "config": {
+        "bounds": {
+          "width": 145,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 15,
+        "y": 70
+      },
+      "config": {
+        "text": "Location (Xf, Yf, Zf)"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtLocation",
+      "location": {
+        "x": 110,
+        "y": 70
+      },
+      "config": {
+        "bounds": {
+          "width": 135,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnApply",
+      "location": {
+        "x": 210,
+        "y": 100
+      },
+      "config": {
+        "text": "Apply"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnCancel",
+      "location": {
+        "x": 160,
+        "y": 100
+      },
+      "config": {
+        "text": "Cancel"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnDelete",
+      "location": {
+        "x": 120,
+        "y": 100
+      },
+      "config": {
+        "text": "Delete"
+      }
+    }
+  ]
+}
