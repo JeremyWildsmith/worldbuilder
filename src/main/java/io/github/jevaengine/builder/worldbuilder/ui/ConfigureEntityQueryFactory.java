@@ -92,6 +92,11 @@ public final class ConfigureEntityQueryFactory
 			m_window.setLocation(location);
 		}
 		
+		public Vector2D getLocation()
+		{
+			return m_window.getLocation();
+		}
+		
 		public void center()
 		{
 			m_window.center();
