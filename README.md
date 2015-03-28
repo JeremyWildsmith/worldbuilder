@@ -1,5 +1,3 @@
-![Logo](http://i.imgur.com/RM2ndqI.jpg)
-
 JevaEngine - Java Isometric Game Engine
 =============
 
@@ -13,8 +11,8 @@ conditioned for user contribution.
 
 License
 ========
-JevaEngine is open-sourced under the GPLv3 License:
-http://www.gnu.org/licenses/gpl-3.0.html
+JevaEngine is open-sourced under the LGPLv2.1 License:
+http://www.gnu.org/licenses/lgpl-2.1.html
 
 Features
 ========
@@ -38,20 +36,15 @@ http://www.youtube.com/watch?v=eOQo7KmqtFM
 ![alt tag](http://i.imgur.com/gEHj6K5.png)
 ![alt tag](http://i.imgur.com/lHYPmUq.png)
 
-Due to some code refactoring, some of those videos will differ from the current version in the repository.
-
 How to Contribute
 =================
 
 - You can contact the project administrator (Jeremy. Allen. Wildsmith) at JeremyWildsmith@yahoo.ca
 - You must sign and agree to the CLA (Contributor License Agreement) <a href="http://www.clahub.com/agreements/JeremyWildsmith/JevaEngineSrc" target="_blank">here.</a> the
-contributor license agreement allows JevaEngine developers (and the user-base of JevaEngine) to use your contributions to the project under the GPLV3 license.
+contributor license agreement allows JevaEngine developers (and the user-base of JevaEngine) to use your contributions to the project under the project's license.
 
 How to Compile\Use
 =================
 
 JevaEngine is fairly straight-forward to compile. As JevaEngine uses Maven as its build platform, the project
-is very portable accross various IDEs and dependency resolution is very easy. You can read a short guide on how
-to setup JevaEngine <a href="https://github.com/JeremyWildsmith/JevaEngineSrc/wiki/Compiling-JevaEngine" target="_blank">here.</a>
-
-You can find some decent quick-start guides on the project's wiki page.
+is very portable accross various IDEs and dependency resolution is very easy. 
