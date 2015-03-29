@@ -36,6 +36,7 @@ import io.github.jevaengine.builder.worldbuilder.world.EditorWorldViewFactory.Ed
 import io.github.jevaengine.builder.worldbuilder.world.EditorWorldViewFactory.IEditorWorldViewObserver;
 import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.math.Vector2D;
+import io.github.jevaengine.script.NullScriptBuilder;
 import io.github.jevaengine.ui.Button;
 import io.github.jevaengine.ui.Button.IButtonPressObserver;
 import io.github.jevaengine.ui.IWindowFactory;
@@ -45,11 +46,10 @@ import io.github.jevaengine.ui.Window;
 import io.github.jevaengine.ui.WindowBehaviourInjector;
 import io.github.jevaengine.ui.WindowManager;
 import io.github.jevaengine.world.IParallelWorldFactory;
-import io.github.jevaengine.world.IWorldFactory;
 import io.github.jevaengine.world.IWorldFactory.WorldConstructionException;
 import io.github.jevaengine.world.World;
 import io.github.jevaengine.world.entity.NullEntityFactory;
-import io.github.jevaengine.world.physics.NullPhysicsWorld;
+import io.github.jevaengine.world.physics.NullPhysicsWorldFactory;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
 
@@ -169,7 +169,7 @@ public final class FloatingToolbarFactory
 			{
 				final StatusDialogue statusDialogue = new StatusDialogueFactory(m_windowManager, m_windowFactory).create();	
 				
-				m_worldFactory.create(name, 1.0F, 1.0F, new IInitializationMonitor<World, IWorldFactory.WorldConstructionException>() {
+				m_worldFactory.create(name, new IInitializationMonitor<World, WorldConstructionException>() {
 					
 					@Override
 					public void statusChanged(float progress, String status)
@@ -238,9 +238,9 @@ public final class FloatingToolbarFactory
 						query.getObservers().add(new ICreateWorldQueryObserver() {
 							
 							@Override
-							public void okay(int width, int height, float friction)
+							public void okay(int width, int height, float friction, float metersPerUnit)
 							{
-								World baseWorld = new World(width, height, new NullPhysicsWorld(friction), new NullEntityFactory());
+								World baseWorld = new World(width, height, friction, metersPerUnit, new NullPhysicsWorldFactory(), new NullEntityFactory(), new NullScriptBuilder());
 								createEditorView(baseWorld);
 								query.dispose();
 							}

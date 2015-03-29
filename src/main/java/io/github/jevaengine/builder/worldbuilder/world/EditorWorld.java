@@ -61,6 +61,7 @@ public final class EditorWorld
 	private final ArrayList<EditorZone> m_zones = new ArrayList<>();
 	private final HashMap<TileLocation, EditorSceneArtifact> m_tiles = new HashMap<>();
 	
+	private float m_metersPerUnit = 0;
 	private float m_maxFrictionForce = 0;
 	
 	private String m_script = "";
@@ -68,6 +69,8 @@ public final class EditorWorld
 	protected EditorWorld(World world, IFontFactory fontFactory)
 	{
 		m_maxFrictionForce = world.getPhysicsWorld().getMaxFrictionForce();
+		m_metersPerUnit = world.getMetersPerUnit();
+		
 		m_world = world;
 		m_worldCursor = new WorldCursor(world);
 		
@@ -312,6 +315,7 @@ public final class EditorWorld
 		WorldConfiguration configuration = new WorldConfiguration();
 
 		configuration.friction = m_maxFrictionForce;
+		configuration.metersPerUnit = m_metersPerUnit;
 		configuration.worldWidth = m_world.getBounds().width;
 		configuration.worldHeight = m_world.getBounds().height;
 		

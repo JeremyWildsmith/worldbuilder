@@ -163,6 +163,7 @@ public final class CreateWorldQueryFactory
 			final TextArea txtWidth = getControl(TextArea.class, "txtWidth");
 			final TextArea txtHeight = getControl(TextArea.class, "txtHeight");
 			final TextArea txtFriction = getControl(TextArea.class, "txtFriction");
+			final TextArea txtMetersPerUnit = getControl(TextArea.class, "txtMetersPerUnit");
 			
 			getControl(Button.class, "btnOkay").getObservers().add(new IButtonPressObserver() {
 				@Override
@@ -170,6 +171,7 @@ public final class CreateWorldQueryFactory
 					Integer width = parseInteger(txtWidth.getText());
 					Integer height = parseInteger(txtHeight.getText());
 					Float friction = parseFloat(txtFriction.getText());
+					Float metersPerUnit = parseFloat(txtMetersPerUnit.getText());
 					
 					if(width == null || width <= 0)
 						validationFailed("'Width' property must be a properly formed number greater than 0.");
@@ -177,8 +179,10 @@ public final class CreateWorldQueryFactory
 						validationFailed("'Height' property must be a properly formed number greater than 0.");
 					else if(friction == null || friction < 0)
 						validationFailed("'Friction' property must be a properly formed floating point greater than 0.");
+					else if(metersPerUnit == null || metersPerUnit < 0)
+						validationFailed("'MetersPerUnit' property must be a properly formed floating point greater than 0.");
 					else
-						m_observers.raise(ICreateWorldQueryObserver.class).okay(width, height, friction);
+						m_observers.raise(ICreateWorldQueryObserver.class).okay(width, height, friction, metersPerUnit);
 				}
 			});
 			
@@ -193,7 +197,7 @@ public final class CreateWorldQueryFactory
 	
 	public interface ICreateWorldQueryObserver
 	{
-		void okay(int width, int height, float friction);
+		void okay(int width, int height, float friction, float metersPerUnit);
 		void cancel();
 	}
 }
