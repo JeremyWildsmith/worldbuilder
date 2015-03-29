@@ -45,7 +45,7 @@ import io.github.jevaengine.builder.worldbuilder.world.ResizeZoneBrushBehaviour.
 import io.github.jevaengine.builder.worldbuilder.world.SampleBrushBehaviour.IBrushSampleHandler;
 import io.github.jevaengine.config.ValueSerializationException;
 import io.github.jevaengine.config.json.JsonVariable;
-import io.github.jevaengine.game.ControlledCamera;
+import io.github.jevaengine.world.scene.camera.ControlledCamera;
 import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.joystick.InputKeyEvent;
 import io.github.jevaengine.joystick.InputKeyEvent.KeyEventType;
