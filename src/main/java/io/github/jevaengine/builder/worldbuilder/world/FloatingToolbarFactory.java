@@ -46,6 +46,7 @@ import io.github.jevaengine.ui.Window;
 import io.github.jevaengine.ui.WindowBehaviourInjector;
 import io.github.jevaengine.ui.WindowManager;
 import io.github.jevaengine.world.IParallelWorldFactory;
+import io.github.jevaengine.world.IWeatherFactory.NullWeather;
 import io.github.jevaengine.world.IWorldFactory.WorldConstructionException;
 import io.github.jevaengine.world.World;
 import io.github.jevaengine.world.entity.NullEntityFactory;
@@ -240,7 +241,7 @@ public final class FloatingToolbarFactory
 							@Override
 							public void okay(int width, int height, float friction, float metersPerUnit)
 							{
-								World baseWorld = new World(width, height, friction, metersPerUnit, new NullPhysicsWorldFactory(), new NullEntityFactory(), new NullScriptBuilder());
+								World baseWorld = new World(width, height, friction, metersPerUnit, new NullWeather(), new NullPhysicsWorldFactory(), new NullEntityFactory(), new NullScriptBuilder());
 								createEditorView(baseWorld);
 								query.dispose();
 							}
