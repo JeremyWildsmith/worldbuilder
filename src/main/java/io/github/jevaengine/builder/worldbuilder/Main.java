@@ -118,7 +118,7 @@ public class Main implements WindowListener, Runnable
 		try(InputStream configSource = new FileInputStream(new File(m_assetSource.toURI().resolve("./" + CONFIG_NAME))))
 		{
 			WorldBuilderConfiguration config = JsonVariable.create(configSource).getValue(WorldBuilderConfiguration.class);
-			m_sceneBufferFactory = new TopologicalOrthographicProjectionSceneBufferFactory(config.projection, true);
+			m_sceneBufferFactory = new TopologicalOrthographicProjectionSceneBufferFactory(config.projection);
 		} catch (FileNotFoundException e)
 		{
 			m_logger.error("The specified project directory does not contain the builder configuration document: " + CONFIG_NAME + ". You will not be able to perform some critical tasks in the world builder.", e);
