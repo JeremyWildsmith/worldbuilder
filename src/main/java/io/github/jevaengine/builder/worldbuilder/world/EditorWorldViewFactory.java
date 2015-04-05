@@ -82,6 +82,7 @@ import io.github.jevaengine.world.IWeatherFactory.WeatherConstructionException;
 import io.github.jevaengine.world.World;
 import io.github.jevaengine.world.entity.IEntity;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
+import io.github.jevaengine.world.scene.effect.DebugDrawComponent;
 import io.github.jevaengine.world.scene.effect.HideEntityObstructionsEffect;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
 
@@ -197,6 +198,7 @@ public class EditorWorldViewFactory
 			m_world = world;
 			m_camera = new ControlledCamera(sceneBufferFactory);
 			m_camera.attach(world.getWorld());
+			m_camera.addEffect(new DebugDrawComponent());
 			m_camera.addEffect(new HideEntityObstructionsEffect(m_world.getCursor().getEntity(), 0.4F));
 			m_modelFactory = modelFactory;
 		}
@@ -374,7 +376,7 @@ public class EditorWorldViewFactory
 		{
 			WorldConfiguration config = m_world.createWorldConfiguration();
 			
-			try(FileOutputStream fos = new FileOutputStream(new File(m_baseDirectory.resolve(destination))))
+			try(FileOutputStream fos = new FileOutputStream(new File(m_baseDirectory.resolve(URI.create("/").relativize(destination)))))
 			{
 				JsonVariable var = new JsonVariable();
 				var.setValue(config);
