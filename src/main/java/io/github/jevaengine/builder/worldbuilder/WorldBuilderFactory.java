@@ -28,6 +28,7 @@ import io.github.jevaengine.graphics.ISpriteFactory;
 import io.github.jevaengine.joystick.IInputSource;
 import io.github.jevaengine.ui.IWindowFactory;
 import io.github.jevaengine.world.IParallelWorldFactory;
+import io.github.jevaengine.world.IWeatherFactory;
 import io.github.jevaengine.world.IWorldFactory;
 import io.github.jevaengine.world.ThreadPooledWorldFactory;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
@@ -53,9 +54,10 @@ public final class WorldBuilderFactory implements IGameFactory
 	private final IFontFactory m_fontFactory;
 	private final IConfigurationFactory m_configurationFactory;
 	private final IAnimationSceneModelFactory m_animationSceneModelFactory;
+	private final IWeatherFactory m_weatherFactory;
 	
 	@Inject
-	public WorldBuilderFactory(IInputSource inputSource, IConfigurationFactory configurationFactory, IRenderer renderer, ISceneBufferFactory sceneBufferFactory, ISpriteFactory spriteFactory, IWindowFactory windowFactory, IWorldFactory worldFactory, IEngineThreadPool engineThreadPool, IFontFactory fontFactory, IAnimationSceneModelFactory animationSceneModelFactory)
+	public WorldBuilderFactory(IInputSource inputSource, IConfigurationFactory configurationFactory, IRenderer renderer, ISceneBufferFactory sceneBufferFactory, ISpriteFactory spriteFactory, IWindowFactory windowFactory, IWorldFactory worldFactory, IEngineThreadPool engineThreadPool, IFontFactory fontFactory, IAnimationSceneModelFactory animationSceneModelFactory, IWeatherFactory weatherFactory)
 	{
 		m_inputSource = inputSource;
 		m_configurationFactory = configurationFactory;
@@ -66,6 +68,7 @@ public final class WorldBuilderFactory implements IGameFactory
 		m_worldFactory = new ThreadPooledWorldFactory(worldFactory, engineThreadPool);
 		m_fontFactory = fontFactory;
 		m_animationSceneModelFactory = animationSceneModelFactory;
+		m_weatherFactory = weatherFactory;
 	}
 	
 	public IGame create()
@@ -74,6 +77,6 @@ public final class WorldBuilderFactory implements IGameFactory
 		//it will not be injected. The implementation assumes that it will be.
 		assert m_baseDirectory != null: "BASE_DIRECTORY was not injected into WorldBuilder";
 		
-		return new WorldBuilder(m_inputSource, m_configurationFactory, m_sceneBufferFactory, m_spriteFactory, m_windowFactory, m_worldFactory, m_fontFactory, m_animationSceneModelFactory, m_renderer.getResolution(), m_baseDirectory);
+		return new WorldBuilder(m_inputSource, m_configurationFactory, m_sceneBufferFactory, m_spriteFactory, m_windowFactory, m_worldFactory, m_fontFactory, m_animationSceneModelFactory, m_weatherFactory, m_renderer.getResolution(), m_baseDirectory);
 	}
 }

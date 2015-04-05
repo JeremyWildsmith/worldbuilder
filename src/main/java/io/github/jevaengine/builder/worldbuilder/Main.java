@@ -76,8 +76,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
-import io.github.jevaengine.world.IWeatherFactory;
-import io.github.jevaengine.world.IWeatherFactory.NullWeatherFactory;
 
 public class Main implements WindowListener, Runnable
 {
@@ -191,7 +189,6 @@ public class Main implements WindowListener, Runnable
 			bind(IEntityFactory.class).to(NullEntityFactory.class);
 			bind(IWorldFactory.class).to(EditorWorldFactory.class);
 			bind(ISceneBufferFactory.class).toInstance(m_sceneBufferFactory);
-			bind(IWeatherFactory.class).toInstance(new NullWeatherFactory());
 			
 			IAssetStreamFactory assetStreamFactory = new BuilderAssetStreamFactory(m_assetSource);
 			IRenderer frameRenderer = new FrameRenderer(m_frame, false, RenderFitMode.Stretch);

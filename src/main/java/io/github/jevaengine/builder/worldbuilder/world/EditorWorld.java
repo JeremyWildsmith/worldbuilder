@@ -20,7 +20,7 @@ package io.github.jevaengine.builder.worldbuilder.world;
 
 import io.github.jevaengine.builder.worldbuilder.world.EditorEntity.DummyEntity;
 import io.github.jevaengine.builder.worldbuilder.world.EditorSceneArtifact.DummySceneArtifact;
-import io.github.jevaengine.builder.worldbuilder.world.EditorZone.DummyZone;
+import io.github.jevaengine.builder.worldbuilder.world.EditorWorldFactory.EditorWeatherFactory.EditorWeather;
 import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.math.Rect2D;
 import io.github.jevaengine.math.Rect3F;
@@ -105,7 +105,7 @@ public final class EditorWorld
 								);
 	}
 	
-	protected World getWorld()
+	World getWorld()
 	{
 		return m_world;
 	}
@@ -113,6 +113,20 @@ public final class EditorWorld
 	public WorldCursor getCursor()
 	{
 		return m_worldCursor;
+	}
+	
+	@Nullable
+	public EditorWeather getWeather()
+	{
+		if(m_world.getWeather() instanceof EditorWeather)
+			return (EditorWeather)m_world.getWeather();
+		
+		return null;
+	}
+
+	public void setWeather(EditorWeather weather)
+	{
+		m_world.setWeather(weather);
 	}
 	
 	public float getFriction()
@@ -192,7 +206,7 @@ public final class EditorWorld
 	{
 		setTile(null, location);
 	}
-
+	
 	public String getScript()
 	{
 		return m_script;
@@ -314,6 +328,7 @@ public final class EditorWorld
 	{
 		WorldConfiguration configuration = new WorldConfiguration();
 
+		configuration.weather = m_world.getWeather() instanceof EditorWeather ? ((EditorWeather)m_world.getWeather()).getName().toString() : null;
 		configuration.friction = m_maxFrictionForce;
 		configuration.metersPerUnit = m_metersPerUnit;
 		configuration.worldWidth = m_world.getBounds().width;
@@ -331,8 +346,8 @@ public final class EditorWorld
 	
 	public static final class WorldCursor
 	{
-		private World m_hostWorld;
-		private CursorEntity m_cursorEntity = new CursorEntity();
+		private final World m_hostWorld;
+		private final CursorEntity m_cursorEntity = new CursorEntity();
 		
 		private WorldCursor(World host)
 		{
@@ -360,6 +375,11 @@ public final class EditorWorld
 		public void clearModel()
 		{
 			setModel(new NullSceneModel());
+		}
+		
+		IEntity getEntity()
+		{
+			return m_cursorEntity;
 		}
 		
 		private static class CursorEntity implements IEntity
@@ -453,6 +473,7 @@ public final class EditorWorld
 				return true;
 			}
 			
+			@Override
 			public IEntityTaskModel getTaskModel()
 			{
 				return new NullEntityTaskModel();
@@ -464,7 +485,7 @@ public final class EditorWorld
 	{
 		public static final float TOLERANCE = 0.0001F;
 		
-		private float m_value;
+		private final float m_value;
 		
 		public KeyableFloat(float value)
 		{

@@ -24,7 +24,9 @@ import io.github.jevaengine.config.IConfigurationFactory;
 import io.github.jevaengine.config.ValueSerializationException;
 import io.github.jevaengine.config.json.JsonVariable;
 import io.github.jevaengine.graphics.IFontFactory;
+import io.github.jevaengine.graphics.IRenderable;
 import io.github.jevaengine.graphics.ISpriteFactory;
+import io.github.jevaengine.math.Rect2D;
 import io.github.jevaengine.script.IScriptBuilderFactory;
 import io.github.jevaengine.world.DefaultWorldFactory;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.EntityImportDeclaration;
@@ -34,16 +36,19 @@ import io.github.jevaengine.world.entity.IEntity;
 import io.github.jevaengine.world.entity.IEntityFactory;
 import io.github.jevaengine.world.entity.IEntityFactory.EntityConstructionException;
 import io.github.jevaengine.world.physics.IPhysicsWorldFactory;
+import io.github.jevaengine.world.scene.ISceneBuffer;
 import io.github.jevaengine.world.scene.model.IAnimationSceneModelFactory;
 import io.github.jevaengine.world.scene.model.ISceneModel;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory.SceneModelConstructionException;
+import java.awt.Graphics2D;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Collection;
 
 import javax.inject.Inject;
 
-public class EditorWorldFactory extends DefaultWorldFactory
+public final class EditorWorldFactory extends DefaultWorldFactory
 {
 	private final IFontFactory m_fontFactory;
 	
@@ -58,7 +63,8 @@ public class EditorWorldFactory extends DefaultWorldFactory
 			IWeatherFactory weatherFactory) {
 	
 		super(threadPool, entityFactory, scriptFactory, configurationFactory,
-				spriteFactory, audioClipFactory, physicsWorldFactory, animationSceneModelFactory, weatherFactory);
+				spriteFactory, audioClipFactory, physicsWorldFactory, animationSceneModelFactory,
+				new EditorWeatherFactory(weatherFactory));
 	
 		m_fontFactory = fontFactory;
 	}
@@ -97,6 +103,75 @@ public class EditorWorldFactory extends DefaultWorldFactory
 		} catch (ValueSerializationException | URISyntaxException e)
 		{
 			throw new EntityConstructionException(entityConfig.name, e);
+		}
+	}
+	
+	public static final class EditorWeatherFactory implements IWeatherFactory
+	{
+		private final IWeatherFactory m_weatherFactory;
+
+		public EditorWeatherFactory(IWeatherFactory weatherFactory)
+		{
+			m_weatherFactory = weatherFactory;
+		}
+
+		@Override
+		public EditorWeather create(URI name) throws IWeatherFactory.WeatherConstructionException
+		{
+			return new EditorWeather(name, m_weatherFactory.create(name));
+		}
+
+		public static final class EditorWeather implements IWeatherFactory.IWeather
+		{
+			private final URI m_name;
+			private final IWeatherFactory.IWeather m_weather;
+
+			public EditorWeather(URI name, IWeatherFactory.IWeather weather)
+			{
+				m_name = name;
+				m_weather = weather;
+			}
+
+			public URI getName()
+			{
+				return m_name;
+			}
+
+			@Override
+			public void update(int deltaTime)
+			{
+				m_weather.update(deltaTime);
+			}
+
+			@Override
+			public void dispose()
+			{
+				m_weather.dispose();
+			}
+
+			@Override
+			public IRenderable getUnderlay(Rect2D bounds)
+			{
+				return m_weather.getUnderlay(bounds);
+			}
+
+			@Override
+			public IRenderable getOverlay(Rect2D bounds)
+			{
+				return m_weather.getOverlay(bounds);
+			}
+
+			@Override
+			public void preRenderComponent(Graphics2D g, int offsetX, int offsetY, float scale, ISceneBuffer.ISceneBufferEntry subject, Collection<ISceneBuffer.ISceneBufferEntry> beneath)
+			{
+				m_weather.preRenderComponent(g, offsetX, offsetY, scale, subject, beneath);
+			}
+
+			@Override
+			public void postRenderComponent()
+			{
+				m_weather.postRenderComponent();
+			}
 		}
 	}
 }

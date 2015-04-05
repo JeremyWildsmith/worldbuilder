@@ -53,9 +53,20 @@
     },
     {
       "type": "button",
+      "name": "btnChangeWeather",
+      "location": {
+        "x": 650,
+        "y": 20
+      },
+      "config": {
+        "text": "Change Weather"
+      }
+    },
+    {
+      "type": "button",
       "name": "btnAdjustZoom",
       "location": {
-        "x": 320,
+        "x": 400,
         "y": 5
       },
       "config": {

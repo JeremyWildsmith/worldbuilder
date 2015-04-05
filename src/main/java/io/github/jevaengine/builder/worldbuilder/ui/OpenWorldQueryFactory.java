@@ -161,7 +161,7 @@ public class OpenWorldQueryFactory
 				@Override
 				public void onPress() {
 					try {
-						final FileInputQuery query = new FileInputQueryFactory(m_windowManager, m_windowFactory).create(FileInputQueryMode.OpenFile, "World to open", m_base);
+						final FileInputQuery query = new FileInputQueryFactory(m_windowManager, m_windowFactory, m_base).create(FileInputQueryMode.OpenFile, "World to open", m_base);
 						query.getObservers().add(new IFileInputQueryObserver() {
 							@Override
 							public void okay(URI input) {

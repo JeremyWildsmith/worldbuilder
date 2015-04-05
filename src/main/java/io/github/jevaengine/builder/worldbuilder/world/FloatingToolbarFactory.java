@@ -46,6 +46,7 @@ import io.github.jevaengine.ui.Window;
 import io.github.jevaengine.ui.WindowBehaviourInjector;
 import io.github.jevaengine.ui.WindowManager;
 import io.github.jevaengine.world.IParallelWorldFactory;
+import io.github.jevaengine.world.IWeatherFactory;
 import io.github.jevaengine.world.IWeatherFactory.NullWeather;
 import io.github.jevaengine.world.IWorldFactory.WorldConstructionException;
 import io.github.jevaengine.world.World;
@@ -72,9 +73,11 @@ public final class FloatingToolbarFactory
 	
 	private final IFontFactory m_fontFactory;
 	
+	private final IWeatherFactory m_weatherFactory;
+	
 	private final URI m_baseDirectory;
 	
-	public FloatingToolbarFactory(WindowManager windowManager, IWindowFactory windowFactory, ISceneBufferFactory sceneBufferFactory, ISceneModelFactory modelFactory, IParallelWorldFactory worldFactory, IFontFactory fontFactory, URI baseDirectory)
+	public FloatingToolbarFactory(WindowManager windowManager, IWindowFactory windowFactory, ISceneBufferFactory sceneBufferFactory, ISceneModelFactory modelFactory, IParallelWorldFactory worldFactory, IFontFactory fontFactory, IWeatherFactory weatherFactory, URI baseDirectory)
 	{
 		m_windowManager = windowManager;
 		m_windowFactory = windowFactory;
@@ -82,6 +85,7 @@ public final class FloatingToolbarFactory
 		m_modelFactory = modelFactory;
 		m_worldFactory = worldFactory;
 		m_fontFactory = fontFactory;
+		m_weatherFactory = weatherFactory;
 		m_baseDirectory = baseDirectory;
 	}
 	
@@ -149,7 +153,7 @@ public final class FloatingToolbarFactory
 		{
 			try
 			{
-				final EditorWorldView worldView = new EditorWorldViewFactory(m_windowManager, m_windowFactory, m_sceneBufferFactory, m_modelFactory, m_fontFactory, m_baseDirectory).create(new EditorWorld(world, m_fontFactory));
+				final EditorWorldView worldView = new EditorWorldViewFactory(m_windowManager, m_windowFactory, m_sceneBufferFactory, m_modelFactory, m_fontFactory, m_weatherFactory, m_baseDirectory).create(new EditorWorld(world, m_fontFactory));
 			
 				worldView.getObservers().add(new IEditorWorldViewObserver() {
 					@Override

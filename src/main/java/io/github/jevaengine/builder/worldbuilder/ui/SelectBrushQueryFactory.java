@@ -277,7 +277,7 @@ public final class SelectBrushQueryFactory
 				public void onPress() {
 					try
 					{
-						final FileInputQuery query = new FileInputQueryFactory(m_windowManager, m_windowFactory, m_base).create(FileInputQueryMode.OpenFile, "Sprite resource", m_base);
+						final FileInputQuery query = new FileInputQueryFactory(m_windowManager, m_windowFactory, m_base).create(FileInputQueryMode.OpenFile, "Model Resource", m_defaultValue == null ? URI.create("") : m_defaultValue.getModelName());
 						query.getObservers().add(new IFileInputQueryObserver() {
 							
 							@Override

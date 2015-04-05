@@ -40,6 +40,7 @@ import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQueryFactory.ISel
 import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQueryFactory.SelectBrushQuery;
 import io.github.jevaengine.builder.worldbuilder.world.Brush.IBrushBehaviorObserver;
 import io.github.jevaengine.builder.worldbuilder.world.EditorEntity.DummyEntity;
+import io.github.jevaengine.builder.worldbuilder.world.EditorWorldFactory.EditorWeatherFactory;
 import io.github.jevaengine.builder.worldbuilder.world.EditorZone.DummyZone;
 import io.github.jevaengine.builder.worldbuilder.world.ResizeZoneBrushBehaviour.IResizeZoneBrushBehaviourHandler;
 import io.github.jevaengine.builder.worldbuilder.world.SampleBrushBehaviour.IBrushSampleHandler;
@@ -76,9 +77,12 @@ import io.github.jevaengine.util.IObserverRegistry;
 import io.github.jevaengine.util.Nullable;
 import io.github.jevaengine.util.Observers;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration;
+import io.github.jevaengine.world.IWeatherFactory;
+import io.github.jevaengine.world.IWeatherFactory.WeatherConstructionException;
 import io.github.jevaengine.world.World;
 import io.github.jevaengine.world.entity.IEntity;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
+import io.github.jevaengine.world.scene.effect.HideEntityObstructionsEffect;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
 
 import java.awt.event.KeyEvent;
@@ -102,6 +106,8 @@ public class EditorWorldViewFactory
 	private final IWindowFactory m_windowFactory;
 	private final ISceneBufferFactory m_sceneBufferFactory;
 	private final ISceneModelFactory m_modelFactory;
+
+	private final EditorWeatherFactory m_weatherFactory;
 	
 	private final IFontFactory m_fontFactory;
 	
@@ -109,11 +115,13 @@ public class EditorWorldViewFactory
 	
 	public EditorWorldViewFactory(WindowManager windowManager, IWindowFactory windowFactory,
 									ISceneBufferFactory sceneBufferFactory, ISceneModelFactory modelFactory, IFontFactory fontFactory,
+									IWeatherFactory weatherFactory,
 									URI baseDirectory)
 	{
 		m_windowManager = windowManager;
 		m_windowFactory = windowFactory;
 		
+		m_weatherFactory = new EditorWeatherFactory(weatherFactory);
 		m_fontFactory = fontFactory;
 		m_sceneBufferFactory = sceneBufferFactory;
 		m_modelFactory = modelFactory;
@@ -189,6 +197,7 @@ public class EditorWorldViewFactory
 			m_world = world;
 			m_camera = new ControlledCamera(sceneBufferFactory);
 			m_camera.attach(world.getWorld());
+			m_camera.addEffect(new HideEntityObstructionsEffect(m_world.getCursor().getEntity(), 0.4F));
 			m_modelFactory = modelFactory;
 		}
 		
@@ -365,7 +374,7 @@ public class EditorWorldViewFactory
 		{
 			WorldConfiguration config = m_world.createWorldConfiguration();
 			
-			try(FileOutputStream fos = new FileOutputStream(new File(destination)))
+			try(FileOutputStream fos = new FileOutputStream(new File(m_baseDirectory.resolve(destination))))
 			{
 				JsonVariable var = new JsonVariable();
 				var.setValue(config);
@@ -537,6 +546,38 @@ public class EditorWorldViewFactory
 				}
 			});
 			
+			getControl(Button.class, "btnChangeWeather").getObservers().add(new IButtonPressObserver() {
+				@Override
+				public void onPress() {
+					try
+					{
+						URI currentWeather = m_world.getWeather() == null ? m_baseDirectory : m_world.getWeather().getName();
+						
+						final FileInputQuery query = new FileInputQueryFactory(m_windowManager, m_windowFactory, m_baseDirectory).create(FileInputQueryMode.OpenFile, "Weather: ", currentWeather);
+						query.getObservers().add(new IFileInputQueryObserver() {			
+							@Override
+							public void okay(URI input)
+							{
+								try
+								{
+									m_world.setWeather(m_weatherFactory.create(input));
+									query.dispose();
+								} catch(WeatherConstructionException e)
+								{
+									displayMessage("Error constructing world weather. Either due to the fact that is it not properly formatted, or it does not exist.");
+								}
+							}
+							@Override
+							public void cancel() {
+								query.dispose();
+							}
+						});
+					} catch (WindowConstructionException e) {
+						m_logger.error("Unable to construct text input dialogue for depth adjust", e);
+					}
+				}
+			});
+			
 			getControl(Button.class, "btnClose").getObservers().add(new IButtonPressObserver() {
 				@Override
 				public void onPress() {
@@ -663,7 +704,7 @@ public class EditorWorldViewFactory
 				public void onPress() {
 					
 					try {
-						final FileInputQuery query = new FileInputQueryFactory(m_windowManager, m_windowFactory).create(FileInputQueryMode.SaveFile, "World Save Location", m_baseDirectory);
+						final FileInputQuery query = new FileInputQueryFactory(m_windowManager, m_windowFactory, m_baseDirectory).create(FileInputQueryMode.SaveFile, "World Save Location", m_baseDirectory);
 						query.getObservers().add(new IFileInputQueryObserver() {
 							
 							@Override
