@@ -26,6 +26,7 @@ import io.github.jevaengine.config.json.JsonVariable;
 import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.graphics.IRenderable;
 import io.github.jevaengine.graphics.ISpriteFactory;
+import io.github.jevaengine.math.Matrix3X3;
 import io.github.jevaengine.math.Rect2D;
 import io.github.jevaengine.script.IScriptBuilderFactory;
 import io.github.jevaengine.world.DefaultWorldFactory;
@@ -70,11 +71,11 @@ public final class EditorWorldFactory extends DefaultWorldFactory
 	}
 
 	@Override
-	protected IEntity createSceneArtifact(SceneArtifactDeclaration artifactDecl) throws EntityConstructionException
+	protected IEntity createSceneArtifact(SceneArtifactDeclaration artifactDecl, URI context) throws EntityConstructionException
 	{
 		try
 		{
-			URI modelUri = new URI(artifactDecl.model);
+			URI modelUri = context.resolve(new URI(artifactDecl.model));
 			
 			ISceneModel model = m_animationSceneModelFactory.create(modelUri);
 			model.setDirection(artifactDecl.direction);
@@ -86,7 +87,7 @@ public final class EditorWorldFactory extends DefaultWorldFactory
 	}
 	
 	@Override
-	protected IEntity createEntity(EntityImportDeclaration entityConfig) throws EntityConstructionException
+	protected IEntity createEntity(EntityImportDeclaration entityConfig, URI context) throws EntityConstructionException
 	{
 		try
 		{
@@ -121,7 +122,7 @@ public final class EditorWorldFactory extends DefaultWorldFactory
 			return new EditorWeather(name, m_weatherFactory.create(name));
 		}
 
-		public static final class EditorWeather implements IWeatherFactory.IWeather
+		public static final class EditorWeather implements IWeather
 		{
 			private final URI m_name;
 			private final IWeatherFactory.IWeather m_weather;
@@ -150,27 +151,21 @@ public final class EditorWorldFactory extends DefaultWorldFactory
 			}
 
 			@Override
-			public IRenderable getUnderlay(Rect2D bounds)
+			public IRenderable getUnderlay(Rect2D bounds, Matrix3X3 projection)
 			{
-				return m_weather.getUnderlay(bounds);
+				return m_weather.getUnderlay(bounds, projection);
 			}
 
 			@Override
-			public IRenderable getOverlay(Rect2D bounds)
+			public IRenderable getOverlay(Rect2D bounds, Matrix3X3 projection)
 			{
-				return m_weather.getOverlay(bounds);
+				return m_weather.getOverlay(bounds, projection);
 			}
 
 			@Override
-			public void preRenderComponent(Graphics2D g, int offsetX, int offsetY, float scale, ISceneBuffer.ISceneBufferEntry subject, Collection<ISceneBuffer.ISceneBufferEntry> beneath)
+			public ISceneBuffer.ISceneComponentEffect getComponentEffect(Graphics2D g, int offsetX, int offsetY, float scale, Matrix3X3 projection, ISceneBuffer.ISceneBufferEntry subject, Collection<ISceneBuffer.ISceneBufferEntry> beneath)
 			{
-				m_weather.preRenderComponent(g, offsetX, offsetY, scale, subject, beneath);
-			}
-
-			@Override
-			public void postRenderComponent()
-			{
-				m_weather.postRenderComponent();
+				return m_weather.getComponentEffect(g, offsetX, offsetY, scale, projection, subject, beneath);
 			}
 		}
 	}
