@@ -74,13 +74,6 @@ public final class EditorSceneArtifact
 	{
 		return m_isTraversable;
 	}
-	
-	public boolean isDefaultEffects()
-	{
-		TileEffects efx = new TileEffects();
-		
-		return m_isTraversable == efx.isTraversable();
-	}
 
 	public IImmutableSceneModel getModel()
 	{
