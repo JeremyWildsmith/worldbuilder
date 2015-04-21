@@ -23,7 +23,6 @@ import io.github.jevaengine.util.IObserverRegistry;
 import io.github.jevaengine.util.NullObservers;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.SceneArtifactDeclaration;
 import io.github.jevaengine.world.Direction;
-import io.github.jevaengine.world.EffectMap.TileEffects;
 import io.github.jevaengine.world.World;
 import io.github.jevaengine.world.entity.IEntity;
 import io.github.jevaengine.world.entity.IEntityTaskModel;
