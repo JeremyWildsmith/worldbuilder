@@ -76,6 +76,12 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.name.Names;
+import io.github.jevaengine.graphics.DefaultGraphicShaderFactory;
+import io.github.jevaengine.graphics.ExtentionMuxedGraphicFactory;
+import io.github.jevaengine.graphics.ShadedGraphicFactory;
+import io.github.jevaengine.world.IEffectMapFactory;
+import io.github.jevaengine.world.TiledEffectMapFactory;
+import java.nio.file.Paths;
 
 public class Main implements WindowListener, Runnable
 {
@@ -189,13 +195,22 @@ public class Main implements WindowListener, Runnable
 			bind(IEntityFactory.class).to(NullEntityFactory.class);
 			bind(IWorldFactory.class).to(EditorWorldFactory.class);
 			bind(ISceneBufferFactory.class).toInstance(m_sceneBufferFactory);
+			bind(IEffectMapFactory.class).to(TiledEffectMapFactory.class);
 			
 			IAssetStreamFactory assetStreamFactory = new BuilderAssetStreamFactory(m_assetSource);
 			IRenderer frameRenderer = new FrameRenderer(m_frame, false, RenderFitMode.Stretch);
 			
-			bind(IRenderer.class).toInstance(frameRenderer);
-			bind(IGraphicFactory.class).toInstance(new CachedGraphicFactory(new BufferedImageGraphicFactory(frameRenderer, assetStreamFactory)));
+			IConfigurationFactory configurationFactory = new CachedConfigurationFactory(new JsonConfigurationFactory(assetStreamFactory));
 			bind(IAssetStreamFactory.class).toInstance(assetStreamFactory);
+			bind(IRenderer.class).toInstance(frameRenderer);
+			
+			ExtentionMuxedGraphicFactory muxedGraphicFactory = new ExtentionMuxedGraphicFactory(new BufferedImageGraphicFactory(frameRenderer, assetStreamFactory));
+			IGraphicFactory graphicFactory = new CachedGraphicFactory(muxedGraphicFactory);
+			muxedGraphicFactory.put(".sgf", new ShadedGraphicFactory(new DefaultGraphicShaderFactory(), graphicFactory, configurationFactory));
+			
+			bind(IGraphicFactory.class).toInstance(graphicFactory);
+		
+			bind(IRenderer.class).toInstance(frameRenderer);
 			
 			if(m_enableCache)
 				bind(IConfigurationFactory.class).toInstance(new CachedConfigurationFactory(new JsonConfigurationFactory(assetStreamFactory)));

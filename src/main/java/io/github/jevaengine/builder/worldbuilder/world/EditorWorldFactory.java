@@ -32,6 +32,7 @@ import io.github.jevaengine.script.IScriptBuilderFactory;
 import io.github.jevaengine.world.DefaultWorldFactory;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.EntityImportDeclaration;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.SceneArtifactDeclaration;
+import io.github.jevaengine.world.IEffectMapFactory;
 import io.github.jevaengine.world.IWeatherFactory;
 import io.github.jevaengine.world.entity.IEntity;
 import io.github.jevaengine.world.entity.IEntityFactory;
@@ -61,11 +62,12 @@ public final class EditorWorldFactory extends DefaultWorldFactory
 			IPhysicsWorldFactory physicsWorldFactory,
 			IFontFactory fontFactory,
 			IAnimationSceneModelFactory animationSceneModelFactory,
-			IWeatherFactory weatherFactory) {
+			IWeatherFactory weatherFactory,
+			IEffectMapFactory effectMapFactory) {
 	
 		super(threadPool, entityFactory, scriptFactory, configurationFactory,
 				spriteFactory, audioClipFactory, physicsWorldFactory, animationSceneModelFactory,
-				new EditorWeatherFactory(weatherFactory));
+				new EditorWeatherFactory(weatherFactory), effectMapFactory);
 	
 		m_fontFactory = fontFactory;
 	}

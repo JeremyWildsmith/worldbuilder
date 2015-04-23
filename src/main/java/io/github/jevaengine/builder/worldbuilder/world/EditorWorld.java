@@ -62,6 +62,7 @@ public final class EditorWorld
 	private final HashMap<TileLocation, EditorSceneArtifact> m_tiles = new HashMap<>();
 	
 	private float m_metersPerUnit = 0;
+	private float m_logicPerUnit = 0;
 	private float m_maxFrictionForce = 0;
 	
 	private String m_script = "";
@@ -70,6 +71,7 @@ public final class EditorWorld
 	{
 		m_maxFrictionForce = world.getPhysicsWorld().getMaxFrictionForce();
 		m_metersPerUnit = world.getMetersPerUnit();
+		m_logicPerUnit = world.getLogicPerUnit();
 		
 		m_world = world;
 		m_worldCursor = new WorldCursor(world);
@@ -331,6 +333,7 @@ public final class EditorWorld
 		configuration.weather = m_world.getWeather() instanceof EditorWeather ? ((EditorWeather)m_world.getWeather()).getName().toString() : null;
 		configuration.friction = m_maxFrictionForce;
 		configuration.metersPerUnit = m_metersPerUnit;
+		configuration.logicPerUnit = m_logicPerUnit;
 		configuration.worldWidth = m_world.getBounds().width;
 		configuration.worldHeight = m_world.getBounds().height;
 		

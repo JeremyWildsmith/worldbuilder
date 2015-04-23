@@ -57,7 +57,7 @@
       "type": "label",
       "location": {
         "x": 10,
-        "y": 100
+        "y": 130
       },
       "config": {
         "text": "Friction"
@@ -68,7 +68,7 @@
       "name": "txtFriction",
       "location": {
         "x": 70,
-        "y": 100
+        "y": 130
       },
       "config": {
         "bounds": {
@@ -93,6 +93,30 @@
       "location": {
         "x": 80,
         "y": 70
+      },
+      "config": {
+        "bounds": {
+          "width": 50,
+          "height": 20
+        }
+      }
+    },
+    {
+      "type": "label",
+      "location": {
+        "x": 10,
+        "y": 100
+      },
+      "config": {
+        "text": "Logic/Unit"
+      }
+    },
+    {
+      "type": "textArea",
+      "name": "txtLogicPerUnit",
+      "location": {
+        "x": 80,
+        "y": 100
       },
       "config": {
         "bounds": {

@@ -30,6 +30,7 @@ import io.github.jevaengine.joystick.IInputSource;
 import io.github.jevaengine.math.Vector2D;
 import io.github.jevaengine.ui.IWindowFactory;
 import io.github.jevaengine.ui.IWindowFactory.WindowConstructionException;
+import io.github.jevaengine.world.IEffectMapFactory;
 import io.github.jevaengine.world.IParallelWorldFactory;
 import io.github.jevaengine.world.IWeatherFactory;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
@@ -46,7 +47,7 @@ public class WorldBuilder extends DefaultGame
 	
 	private Logger m_logger = LoggerFactory.getLogger(WorldBuilder.class);
 	
-	public WorldBuilder(IInputSource inputSource, IConfigurationFactory configurationFactory, ISceneBufferFactory sceneBufferFactory, ISpriteFactory spriteFactory, IWindowFactory windowFactory, IParallelWorldFactory worldFactory, IFontFactory fontFactory, IAnimationSceneModelFactory animationSceneModelFactory, IWeatherFactory weatherFactory, Vector2D resolution, URI baseDirectory)
+	public WorldBuilder(IInputSource inputSource, IConfigurationFactory configurationFactory, ISceneBufferFactory sceneBufferFactory, ISpriteFactory spriteFactory, IWindowFactory windowFactory, IParallelWorldFactory worldFactory, IFontFactory fontFactory, IAnimationSceneModelFactory animationSceneModelFactory, IWeatherFactory weatherFactory, IEffectMapFactory effectMapFactory, Vector2D resolution, URI baseDirectory)
 	{
 		super(inputSource, resolution);
 		
@@ -61,7 +62,7 @@ public class WorldBuilder extends DefaultGame
 		
 		try
 		{
-			new FloatingToolbarFactory(getWindowManager(), windowFactory, sceneBufferFactory, animationSceneModelFactory, worldFactory, fontFactory, weatherFactory, baseDirectory).create().center();
+			new FloatingToolbarFactory(getWindowManager(), windowFactory, sceneBufferFactory, animationSceneModelFactory, worldFactory, fontFactory, weatherFactory, effectMapFactory, baseDirectory).create().center();
 		} catch (WindowConstructionException e)
 		{
 			m_logger.error("Error constructing world builder toolbar.", e);

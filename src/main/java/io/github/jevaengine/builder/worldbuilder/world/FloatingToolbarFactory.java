@@ -45,6 +45,7 @@ import io.github.jevaengine.ui.NoSuchControlException;
 import io.github.jevaengine.ui.Window;
 import io.github.jevaengine.ui.WindowBehaviourInjector;
 import io.github.jevaengine.ui.WindowManager;
+import io.github.jevaengine.world.IEffectMapFactory;
 import io.github.jevaengine.world.IParallelWorldFactory;
 import io.github.jevaengine.world.IWeatherFactory;
 import io.github.jevaengine.world.IWeatherFactory.NullWeather;
@@ -75,9 +76,11 @@ public final class FloatingToolbarFactory
 	
 	private final IWeatherFactory m_weatherFactory;
 	
+	private final IEffectMapFactory m_effectMapFactory;
+	
 	private final URI m_baseDirectory;
 	
-	public FloatingToolbarFactory(WindowManager windowManager, IWindowFactory windowFactory, ISceneBufferFactory sceneBufferFactory, ISceneModelFactory modelFactory, IParallelWorldFactory worldFactory, IFontFactory fontFactory, IWeatherFactory weatherFactory, URI baseDirectory)
+	public FloatingToolbarFactory(WindowManager windowManager, IWindowFactory windowFactory, ISceneBufferFactory sceneBufferFactory, ISceneModelFactory modelFactory, IParallelWorldFactory worldFactory, IFontFactory fontFactory, IWeatherFactory weatherFactory, IEffectMapFactory effectMapFactory, URI baseDirectory)
 	{
 		m_windowManager = windowManager;
 		m_windowFactory = windowFactory;
@@ -86,6 +89,7 @@ public final class FloatingToolbarFactory
 		m_worldFactory = worldFactory;
 		m_fontFactory = fontFactory;
 		m_weatherFactory = weatherFactory;
+		m_effectMapFactory = effectMapFactory;
 		m_baseDirectory = baseDirectory;
 	}
 	
@@ -243,9 +247,9 @@ public final class FloatingToolbarFactory
 						query.getObservers().add(new ICreateWorldQueryObserver() {
 							
 							@Override
-							public void okay(int width, int height, float friction, float metersPerUnit)
+							public void okay(int width, int height, float friction, float metersPerUnit, float logicPerUnit)
 							{
-								World baseWorld = new World(width, height, friction, metersPerUnit, new NullWeather(), new NullPhysicsWorldFactory(), new NullEntityFactory(), new NullScriptBuilder());
+								World baseWorld = new World(width, height, friction, metersPerUnit, logicPerUnit, new NullWeather(), new NullPhysicsWorldFactory(), m_effectMapFactory, new NullEntityFactory(), new NullScriptBuilder());
 								createEditorView(baseWorld);
 								query.dispose();
 							}
