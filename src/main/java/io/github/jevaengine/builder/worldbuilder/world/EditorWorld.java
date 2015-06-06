@@ -302,8 +302,13 @@ public final class EditorWorld
 		
 		public void setLocation(Vector3F location)
 		{
-			//Raise curosr sprite a little above below graphic.
-			m_cursorEntity.getBody().setLocation(location);
+			Rect2D worldBounds = m_hostWorld.getBounds();
+			
+			Vector3F boundedLocation = new Vector3F(location);
+			boundedLocation.x = Math.min(worldBounds.width - 1, Math.max(0, boundedLocation.x));
+			boundedLocation.y = Math.min(worldBounds.height - 1, Math.max(0, boundedLocation.y));
+			
+			m_cursorEntity.getBody().setLocation(boundedLocation);
 		}
 		
 		public Vector3F getLocation()
