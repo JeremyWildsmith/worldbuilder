@@ -36,12 +36,6 @@ public class MoveEntityBrushBehaviour implements IBrushBehaviour
 		m_entity = entity;
 		m_movementHandler = movementHandler;
 	}
-	
-	@Override
-	public boolean isSizable()
-	{
-		return false;
-	}
 
 	@Override
 	public IImmutableSceneModel getModel()

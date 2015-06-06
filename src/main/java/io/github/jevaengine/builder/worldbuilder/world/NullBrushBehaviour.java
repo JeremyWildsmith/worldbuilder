@@ -25,12 +25,6 @@ import io.github.jevaengine.world.scene.model.NullSceneModel;
 public final class NullBrushBehaviour implements IBrushBehaviour
 {
 	@Override
-	public boolean isSizable()
-	{
-		return false;
-	}
-	
-	@Override
 	public ISceneModel getModel()
 	{
 		return new NullSceneModel();

@@ -41,12 +41,6 @@ public final class PlaceSceneArtifactBrushBehaviour implements IBrushBehaviour
 	}
 	
 	@Override
-	public boolean isSizable()
-	{
-		return true;
-	}
-	
-	@Override
 	public IImmutableSceneModel getModel()
 	{
 		return m_model;

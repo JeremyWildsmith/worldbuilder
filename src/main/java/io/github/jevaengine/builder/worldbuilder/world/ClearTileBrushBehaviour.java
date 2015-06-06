@@ -26,12 +26,6 @@ public final class ClearTileBrushBehaviour implements IBrushBehaviour
 {
 
 	@Override
-	public boolean isSizable()
-	{
-		return true;
-	}
-
-	@Override
 	public ISceneModel getModel()
 	{
 		return new NullSceneModel();

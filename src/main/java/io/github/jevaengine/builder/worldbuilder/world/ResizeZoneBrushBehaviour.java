@@ -44,12 +44,6 @@ public final class ResizeZoneBrushBehaviour implements IBrushBehaviour
 		m_zone = zone;
 		m_handler = handler;
 	}
-	
-	@Override
-	public boolean isSizable()
-	{
-		return false;
-	}
 
 	@Override
 	public IImmutableSceneModel getModel()

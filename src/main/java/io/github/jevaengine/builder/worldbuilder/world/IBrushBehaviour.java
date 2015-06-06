@@ -23,7 +23,6 @@ import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
 
 public interface IBrushBehaviour
 {
-	boolean isSizable();
 	IImmutableSceneModel getModel();
 	void apply(EditorWorld world, Vector3F location);
 }

@@ -30,12 +30,6 @@ public final class SampleSceneArtifactBrush implements IBrushBehaviour
 	{
 		m_sampleHandler = sampleHandler;
 	}
-	
-	@Override
-	public boolean isSizable()
-	{
-		return false;
-	}
 
 	@Override
 	public ISceneModel getModel()
