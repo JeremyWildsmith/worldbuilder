@@ -44,11 +44,22 @@
       "type": "button",
       "name": "btnAdjustDepth",
       "location": {
-        "x": 250,
+        "x": 320,
         "y": 5
       },
       "config": {
         "text": "Adjust Depth"
+      }
+    },
+    {
+      "type": "button",
+      "name": "btnAdjustSnapGridSize",
+      "location": {
+        "x": 480,
+        "y": 5
+      },
+      "config": {
+        "text": "Adjust Snap"
       }
     },
     {
