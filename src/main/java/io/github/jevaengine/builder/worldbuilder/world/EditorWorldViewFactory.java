@@ -655,7 +655,7 @@ public class EditorWorldViewFactory
 				public void onPress()
 				{
 					try {
-						final TextInputQuery query = new TextInputQueryFactory(m_windowManager, m_windowFactory).create("Cursor Snap Grid size:", Float.toString(m_world.getCursor().getLocation().z));
+						final TextInputQuery query = new TextInputQueryFactory(m_windowManager, m_windowFactory).create("Cursor Snap Grid size:", Float.toString(cameraController.getCursorSnapGridSize()));
 						query.getObservers().add(new ITextInputQueryObserver() {
 							@Override
 							public void okay(String input)
