@@ -33,31 +33,6 @@
       "type": "label",
       "location": {
         "x": 15,
-        "y": 70
-      },
-      "config": {
-        "text": "Size"
-      }
-    },
-    {
-      "type": "textArea",
-      "name": "txtSize",
-      "location": {
-        "x": 45,
-        "y": 70
-      },
-      "config": {
-        "bounds": {
-          "width": 50,
-          "height": 20
-        },
-        "text": "1"
-      }
-    },
-    {
-      "type": "label",
-      "location": {
-        "x": 15,
         "y": 40
       },
       "config": {

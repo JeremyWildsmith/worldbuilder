@@ -26,7 +26,7 @@ import io.github.jevaengine.builder.ui.FileInputQueryFactory.FileInputQueryMode;
 import io.github.jevaengine.builder.ui.FileInputQueryFactory.IFileInputQueryObserver;
 import io.github.jevaengine.builder.ui.MessageBoxFactory.IMessageBoxObserver;
 import io.github.jevaengine.builder.ui.MessageBoxFactory.MessageBox;
-import io.github.jevaengine.builder.worldbuilder.world.ApplyTileBrushBehaviour;
+import io.github.jevaengine.builder.worldbuilder.world.PlaceSceneArtifactBrushBehaviour;
 import io.github.jevaengine.builder.worldbuilder.world.Brush;
 import io.github.jevaengine.builder.worldbuilder.world.EditorSceneArtifact;
 import io.github.jevaengine.math.Vector2D;
@@ -213,7 +213,6 @@ public final class SelectBrushQueryFactory
 		protected void doInject() throws NoSuchControlException
 		{
 			final TextArea txtModel = getControl(TextArea.class, "txtModel");
-			final TextArea txtSize = getControl(TextArea.class, "txtSize");
 			final TextArea txtDirection = getControl(TextArea.class, "txtDirection");
 			
 			final Checkbox chkIsTraversable = getControl(Checkbox.class, "chkIsTraversable");
@@ -232,12 +231,9 @@ public final class SelectBrushQueryFactory
 				@Override
 				public void onPress()
 				{
-					Integer size = parseInteger(txtSize.getText());
 					Vector2D dirVector = parseVector2D(txtDirection.getText());
 					
-					if(size == null || size <= 0)
-						displayMessage("Brush size must be a properly formed number greater than 0");
-					else if(dirVector == null)
+					if(dirVector == null)
 						displayMessage("Direction must be a properly formed non-zero vector");
 					else
 					{
@@ -249,8 +245,7 @@ public final class SelectBrushQueryFactory
 							ISceneModel model = m_modelFactory.create(modelUri);
 							model.setDirection(direction);
 							
-							m_workingBrush.setSize(size);
-							m_workingBrush.setBehaviour(new ApplyTileBrushBehaviour(model, modelUri, direction, chkIsTraversable.getValue()));
+							m_workingBrush.setBehaviour(new PlaceSceneArtifactBrushBehaviour(model, modelUri, direction, chkIsTraversable.getValue()));
 						} catch (SceneModelConstructionException e)
 						{
 							m_logger.info("Unable to construct model for brush behaviour", e);

@@ -21,7 +21,7 @@ package io.github.jevaengine.builder.worldbuilder.world;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.util.IObserverRegistry;
 import io.github.jevaengine.util.NullObservers;
-import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.SceneArtifactDeclaration;
+import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.SceneArtifactImportDeclaration;
 import io.github.jevaengine.world.Direction;
 import io.github.jevaengine.world.World;
 import io.github.jevaengine.world.entity.IEntity;
@@ -109,9 +109,9 @@ public final class EditorSceneArtifact
 		return m_direction;
 	}
 
-	public SceneArtifactDeclaration createSceneArtifactDeclaration()
+	public SceneArtifactImportDeclaration createSceneArtifactDeclaration()
 	{
-		SceneArtifactDeclaration artifactDecl = new SceneArtifactDeclaration();
+		SceneArtifactImportDeclaration artifactDecl = new SceneArtifactImportDeclaration();
 		
 		artifactDecl.isTraversable = isTraversable();
 		artifactDecl.model = m_sceneModelName.toString();

@@ -31,7 +31,7 @@ import io.github.jevaengine.math.Rect2D;
 import io.github.jevaengine.script.IScriptBuilderFactory;
 import io.github.jevaengine.world.DefaultWorldFactory;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.EntityImportDeclaration;
-import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.SceneArtifactDeclaration;
+import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.SceneArtifactImportDeclaration;
 import io.github.jevaengine.world.IEffectMapFactory;
 import io.github.jevaengine.world.IWeatherFactory;
 import io.github.jevaengine.world.entity.IEntity;
@@ -73,7 +73,7 @@ public final class EditorWorldFactory extends DefaultWorldFactory
 	}
 
 	@Override
-	protected IEntity createSceneArtifact(SceneArtifactDeclaration artifactDecl, URI context) throws EntityConstructionException
+	protected IEntity createSceneArtifact(SceneArtifactImportDeclaration artifactDecl, URI context) throws EntityConstructionException
 	{
 		try
 		{

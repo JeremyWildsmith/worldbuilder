@@ -24,15 +24,13 @@ import io.github.jevaengine.builder.worldbuilder.world.EditorWorldFactory.Editor
 import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.math.Rect2D;
 import io.github.jevaengine.math.Rect3F;
-import io.github.jevaengine.math.Vector2D;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.util.IObserverRegistry;
 import io.github.jevaengine.util.NullObservers;
 import io.github.jevaengine.util.Nullable;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration;
-import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.ArtifactPlane;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.EntityImportDeclaration;
-import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.SceneArtifactDeclaration;
+import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.SceneArtifactImportDeclaration;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.ZoneDeclaration;
 import io.github.jevaengine.world.World;
 import io.github.jevaengine.world.entity.IEntity;
@@ -46,11 +44,11 @@ import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
 import io.github.jevaengine.world.scene.model.NullSceneModel;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public final class EditorWorld
 {
@@ -103,8 +101,7 @@ public final class EditorWorld
 	
 		return new TileLocation(new Vector3F(Math.min(Math.max((float)worldBounds.x, location.x), worldBounds.x + worldBounds.width - 1),
 												Math.min(Math.max((float)worldBounds.y, location.y), worldBounds.y + worldBounds.height - 1),
-												location.z)
-								);
+												location.z));
 	}
 	
 	World getWorld()
@@ -221,89 +218,33 @@ public final class EditorWorld
 	
 	private void serializeTiledLayers(WorldConfiguration hostConfiguration)
 	{
-		HashMap<KeyableFloat, ArrayList<EditorSceneArtifact>> tiles = new HashMap<>();
+		Map<EditorSceneArtifact, List<Vector3F>> importedArtifacts = new HashMap<>();
 		
-		//Sort tiles into corresponding planes
 		for(Map.Entry<TileLocation, EditorSceneArtifact> e : m_tiles.entrySet())
 		{
-			KeyableFloat plane = e.getKey().getHostPlane();
+			if(!importedArtifacts.containsKey(e.getValue()))
+				importedArtifacts.put(e.getValue(), new ArrayList<Vector3F>());
 		
-			if(!tiles.containsKey(plane))
-				tiles.put(plane, new ArrayList<EditorSceneArtifact>());
-			
-			tiles.get(plane).add(e.getValue());
+			importedArtifacts.get(e.getValue()).add(e.getKey().getLocation());
 		}
+	
+		hostConfiguration.artifactImports = new SceneArtifactImportDeclaration[importedArtifacts.size()];
 		
-		//Sort tiles into proper index orders (left to right, top to bottom...
-		for(Map.Entry<KeyableFloat, ArrayList<EditorSceneArtifact>> e : tiles.entrySet())
+		Iterator<Map.Entry<EditorSceneArtifact, List<Vector3F>>> it = importedArtifacts.entrySet().iterator();
+		for(int i = 0; i < importedArtifacts.size(); i++)
 		{
-			ArrayList<EditorSceneArtifact> set = e.getValue();
+			Map.Entry<EditorSceneArtifact, List<Vector3F>> e = it.next();
+			SceneArtifactImportDeclaration decl = new SceneArtifactImportDeclaration();
+			hostConfiguration.artifactImports[i] = decl;
 			
-			Collections.sort(set, new Comparator<EditorSceneArtifact>() {
-				@Override
-				public int compare(EditorSceneArtifact a, EditorSceneArtifact b)
-				{
-					Vector2D aLocation = a.getLocation().getXy().round();
-					Vector2D bLocation = b.getLocation().getXy().round();	
-					
-					return (aLocation.x + aLocation.y * m_world.getBounds().height) - 
-							(bLocation.x + bLocation.y * m_world.getBounds().height);
-				}
-			});
+			decl.direction = e.getKey().getDirection();
+			decl.isTraversable = e.getKey().isTraversable();
+			decl.model = e.getKey().getModelName().toString();
+			decl.locations = new Vector3F[e.getValue().size()];
+			
+			for(int x = 0; x < e.getValue().size(); x++)
+				decl.locations[x] = new Vector3F(e.getValue().get(x));
 		}
-		
-		//Sort tiles into proper index orders (left to right, top to bottom...)
-		//and create a indice set for them.
-		ArrayList<EditorSceneArtifact> allocatedTiles = new ArrayList<>();
-		HashMap<KeyableFloat, Integer[]> indiceSets = new HashMap<>();
-		
-		for(Map.Entry<KeyableFloat, ArrayList<EditorSceneArtifact>> e : tiles.entrySet())
-		{
-			int currentIndiceSetIndex = 0;
-			
-			ArrayList<Integer> indices = new ArrayList<>();
-			
-			for(EditorSceneArtifact t : e.getValue())
-			{
-				Vector2D tileLocation = t.getLocation().getXy().round();	
-				
-				if(!allocatedTiles.contains(t))
-					allocatedTiles.add(t);
-				
-				int indexValue = allocatedTiles.indexOf(t);
-				int indiceSetIndex =  tileLocation.x + tileLocation.y * m_world.getBounds().height;
-				
-				if(currentIndiceSetIndex != indiceSetIndex)
-					indices.add(-(indiceSetIndex - currentIndiceSetIndex)); //Negative value means skip.
-				
-				indices.add(indexValue);
-				currentIndiceSetIndex = indiceSetIndex + 1;
-			}
-			indiceSets.put(e.getKey(), indices.toArray(new Integer[indices.size()]));
-		}
-		
-		//Finally add to WorldConfiguration.
-		
-		//Configure tile allocation list.
-		hostConfiguration.artifacts = new SceneArtifactDeclaration[allocatedTiles.size()];
-		for(int i = 0; i < allocatedTiles.size(); i++)
-			hostConfiguration.artifacts[i] = allocatedTiles.get(i).createSceneArtifactDeclaration();
-		
-		//Add layers...
-		ArrayList<ArtifactPlane> tiledPlanes = new ArrayList<>();
-		for(Map.Entry<KeyableFloat, Integer[]> e : indiceSets.entrySet())
-		{
-			ArtifactPlane plane = new ArtifactPlane();
-			plane.planeZ = e.getKey().getFloatValue();
-			
-			plane.artifactIndices = new int[e.getValue().length];
-			for(int i = 0; i < e.getValue().length; i++)
-				plane.artifactIndices[i] = e.getValue()[i];
-			
-			tiledPlanes.add(plane);
-		}
-		
-		hostConfiguration.artifactPlanes = tiledPlanes.toArray(new ArtifactPlane[tiledPlanes.size()]);
 	}
 	
 	private void serializeEntities(WorldConfiguration hostConfiguration)
@@ -527,57 +468,53 @@ public final class EditorWorld
 	
 	private static final class TileLocation
 	{
-		private Vector2D m_location;
-		private KeyableFloat m_zDepth;
+		private final KeyableFloat m_x;
+		private final KeyableFloat m_y;
+		private final KeyableFloat m_z;
 		
 		public TileLocation(Vector3F location)
 		{
-			m_location = new Vector2D(location.getXy().round());
-			m_zDepth = new KeyableFloat(location.z);
+			m_x = new KeyableFloat(location.x);
+			m_y = new KeyableFloat(location.y);
+			m_z = new KeyableFloat(location.z);
 		}
-		
-		public KeyableFloat getHostPlane()
-		{
-			return m_zDepth;
-		}
-		
+
 		public Vector3F getLocation()
 		{
-			return new Vector3F(m_location, m_zDepth.getFloatValue());
+			return new Vector3F(m_x.getFloatValue(), m_y.getFloatValue(), m_z.getFloatValue());
 		}
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result
-					+ ((m_location == null) ? 0 : m_location.hashCode());
-			result = prime * result
-					+ ((m_zDepth == null) ? 0 : m_zDepth.hashCode());
-			return result;
+			int hash = 7;
+			hash = 67 * hash + Objects.hashCode(this.m_x);
+			hash = 67 * hash + Objects.hashCode(this.m_y);
+			hash = 67 * hash + Objects.hashCode(this.m_z);
+			return hash;
 		}
 
 		@Override
 		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
+			if (obj == null) {
 				return false;
-			if (getClass() != obj.getClass())
+			}
+			if (getClass() != obj.getClass()) {
 				return false;
-			TileLocation other = (TileLocation) obj;
-			if (m_location == null) {
-				if (other.m_location != null)
-					return false;
-			} else if (!m_location.equals(other.m_location))
+			}
+			final TileLocation other = (TileLocation) obj;
+			if (!Objects.equals(this.m_x, other.m_x)) {
 				return false;
-			if (m_zDepth == null) {
-				if (other.m_zDepth != null)
-					return false;
-			} else if (!m_zDepth.equals(other.m_zDepth))
+			}
+			if (!Objects.equals(this.m_y, other.m_y)) {
 				return false;
+			}
+			if (!Objects.equals(this.m_z, other.m_z)) {
+				return false;
+			}
 			return true;
 		}
+
+		
 	}
 	
 	public static final class UnrecognizedWorldEntityException extends RuntimeException

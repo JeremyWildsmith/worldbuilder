@@ -19,34 +19,43 @@
 package io.github.jevaengine.builder.worldbuilder.world;
 
 import io.github.jevaengine.math.Vector3F;
-import io.github.jevaengine.util.IObserverRegistry;
-import io.github.jevaengine.util.Observers;
+import io.github.jevaengine.world.scene.model.ISceneModel;
+import io.github.jevaengine.world.scene.model.NullSceneModel;
 
-public final class Brush
+public final class SampleSceneArtifactBrush implements IBrushBehaviour
 {
-	private IBrushBehaviour m_behaviour = new NullBrushBehaviour();
+	private final ISceneArtifactSampleHandler m_sampleHandler;
+	
+	public SampleSceneArtifactBrush(ISceneArtifactSampleHandler sampleHandler)
+	{
+		m_sampleHandler = sampleHandler;
+	}
+	
+	@Override
+	public boolean isSizable()
+	{
+		return false;
+	}
 
-	private final Observers m_observers = new Observers();
-	
-	public IObserverRegistry getObservers()
+	@Override
+	public ISceneModel getModel()
 	{
-		return m_observers;
+		return new NullSceneModel();
 	}
 	
-	public void setBehaviour(IBrushBehaviour behaviour)
+	@Override
+	public void apply(EditorWorld world, Vector3F location)
 	{
-		m_behaviour = behaviour;
-		m_observers.raise(IBrushBehaviorObserver.class).behaviourChanged(behaviour);
+		EditorSceneArtifact tile = world.getTile(location);
+		
+		if(tile == null)
+			return;
+		
+		m_sampleHandler.sample(tile);
 	}
 	
-	public void apply(EditorWorld world)
+	public interface ISceneArtifactSampleHandler
 	{
-		Vector3F location = world.getCursor().getLocation();
-		m_behaviour.apply(world, location);
-	}
-	
-	public interface IBrushBehaviorObserver
-	{
-		void behaviourChanged(IBrushBehaviour behaviour);
+		void sample(EditorSceneArtifact sample);
 	}
 }

@@ -43,7 +43,7 @@ import io.github.jevaengine.builder.worldbuilder.world.EditorEntity.DummyEntity;
 import io.github.jevaengine.builder.worldbuilder.world.EditorWorldFactory.EditorWeatherFactory;
 import io.github.jevaengine.builder.worldbuilder.world.EditorZone.DummyZone;
 import io.github.jevaengine.builder.worldbuilder.world.ResizeZoneBrushBehaviour.IResizeZoneBrushBehaviourHandler;
-import io.github.jevaengine.builder.worldbuilder.world.SampleBrushBehaviour.IBrushSampleHandler;
+import io.github.jevaengine.builder.worldbuilder.world.SampleSceneArtifactBrush.ISceneArtifactSampleHandler;
 import io.github.jevaengine.config.ValueSerializationException;
 import io.github.jevaengine.config.json.JsonVariable;
 import io.github.jevaengine.world.scene.camera.ControlledCamera;
@@ -679,7 +679,7 @@ public class EditorWorldViewFactory
 			getControl(Button.class, "btnSampleBrush").getObservers().add(new IButtonPressObserver() {
 				@Override
 				public void onPress() {
-					m_workingBrush.setBehaviour(new SampleBrushBehaviour(new IBrushSampleHandler() {
+					m_workingBrush.setBehaviour(new SampleSceneArtifactBrush(new ISceneArtifactSampleHandler() {
 						@Override
 						public void sample(EditorSceneArtifact sample) {
 							m_workingBrush.setBehaviour(new NullBrushBehaviour());
@@ -752,8 +752,8 @@ public class EditorWorldViewFactory
 		{
 			if (!m_cameraMovement.isZero())
 				m_camera.move(m_cameraMovement.normalize().multiply(deltaTime / 100.0F));
-			
-			m_world.getCursor().setLocation(new Vector3F(m_camera.getLookAt().getXy().round(), m_camera.getLookAt().z));
+		
+			m_world.getCursor().setLocation(new Vector3F(m_camera.getLookAt().getXy(), m_camera.getLookAt().z));
 		}
 		
 		@Override
