@@ -482,7 +482,7 @@ public class EditorWorldViewFactory
 			addControl(logicTimer);			
 			worldView.setCamera(m_camera);
 			
-			CameraController cameraController = new CameraController(worldView, m_camera, m_world);
+			final CameraController cameraController = new CameraController(worldView, m_camera, m_world);
 			logicTimer.getObservers().add(cameraController);
 			worldView.getObservers().add(cameraController);
 			getObservers().add(cameraController);
@@ -496,7 +496,7 @@ public class EditorWorldViewFactory
 				public void update(int deltaTime) {
 					m_world.getWorld().update(deltaTime);
 					Vector3F coordinates = m_world.getCursor().getLocation();
-					lblCursorCoordinates.setText(String.format("%f, %f, %f", coordinates.x, coordinates.y, coordinates.z));
+					lblCursorCoordinates.setText(String.format("%f, %f, %f; Snap: %f", coordinates.x, coordinates.y, coordinates.z, cameraController.getCursorSnapGridSize()));
 					
 					EditorSceneArtifact tile = m_world.getTile(coordinates);
 					lblIsTraversable.setText(tile == null || tile.isTraversable() ? "true" : "false");
@@ -600,7 +600,7 @@ public class EditorWorldViewFactory
 							{
 								try
 								{
-									Vector3F cursorLocation = m_camera.getLookAt();
+									Vector3F cursorLocation = m_world.getCursor().getLocation();
 									cursorLocation.z = Float.parseFloat(input);
 									m_camera.lookAt(cursorLocation);
 									query.dispose();
@@ -649,7 +649,37 @@ public class EditorWorldViewFactory
 					}
 				}
 			});
-			
+
+			getControl(Button.class, "btnAdjustSnapGridSize").getObservers().add(new IButtonPressObserver() {
+				@Override
+				public void onPress()
+				{
+					try {
+						final TextInputQuery query = new TextInputQueryFactory(m_windowManager, m_windowFactory).create("Cursor Snap Grid size:", Float.toString(m_world.getCursor().getLocation().z));
+						query.getObservers().add(new ITextInputQueryObserver() {
+							@Override
+							public void okay(String input)
+							{
+								try
+								{
+									cameraController.setCursorSnapGridSize(Float.parseFloat(input));
+									query.dispose();
+								} catch(NumberFormatException e)
+								{
+									displayMessage("Snap grid size must be a properly formed floating point.");
+								}
+							}
+							@Override
+							public void cancel() {
+								query.dispose();
+							}
+						});
+					} catch (WindowConstructionException e) {
+						m_logger.error("Unable to construct text input dialogue for snap grid size adjust", e);
+					}
+				}
+			});
+
 			getControl(Button.class, "btnApplyBrush").getObservers().add(new IButtonPressObserver() {
 				@Override
 				public void onPress() {
@@ -732,13 +762,13 @@ public class EditorWorldViewFactory
 
 	private class CameraController implements IWindowFocusObserver, ITimerObserver, IWorldViewInputObserver
 	{
-		private final Logger m_logger = LoggerFactory.getLogger(CameraController.class);
-		
 		private final ControlledCamera m_camera;
 		private final WorldView m_worldView;
 		private final EditorWorld m_world;
 		
 		private Vector3F m_cameraMovement = new Vector3F();
+		
+		private float m_snapGridSize = 0.5F;
 		
 		public CameraController(WorldView worldView, ControlledCamera camera, EditorWorld world)
 		{
@@ -751,9 +781,22 @@ public class EditorWorldViewFactory
 		public void update(int deltaTime)
 		{
 			if (!m_cameraMovement.isZero())
-				m_camera.move(m_cameraMovement.normalize().multiply(deltaTime / 100.0F));
+				m_camera.move(m_cameraMovement.normalize().multiply(deltaTime / 200.0F * m_snapGridSize));
 		
-			m_world.getCursor().setLocation(new Vector3F(m_camera.getLookAt().getXy(), m_camera.getLookAt().z));
+			float x = (int)(m_camera.getLookAt().x / m_snapGridSize) * m_snapGridSize;
+			float y = Math.round(m_camera.getLookAt().y / m_snapGridSize) * m_snapGridSize;
+			
+			m_world.getCursor().setLocation(new Vector3F(x, y, m_camera.getLookAt().z));
+		}
+		
+		public float getCursorSnapGridSize()
+		{
+			return m_snapGridSize;
+		}
+		
+		public void setCursorSnapGridSize(float gridSize)
+		{
+			m_snapGridSize = Math.max(gridSize, 0.01F);
 		}
 		
 		@Override
