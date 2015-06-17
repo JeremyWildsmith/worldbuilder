@@ -74,7 +74,7 @@ public class SelectBrushQuery extends javax.swing.JFrame {
 		{
 			if(m_lastSelectedModel != null)
 			{
-				URI relativeUri = m_baseDirectory.toURI().relativize(m_lastSelectedModel.toURI());
+				URI relativeUri = URI.create("/").resolve(m_baseDirectory.toURI().relativize(m_lastSelectedModel.toURI()));
 				
 				try
 				{
