@@ -27,12 +27,12 @@ import java.net.URI;
 
 public final class PlaceSceneArtifactBrushBehaviour implements IBrushBehaviour
 {
-	private final ISceneModel m_model;
+	private final IImmutableSceneModel m_model;
 	private final URI m_modelName;
 	private final Direction m_direction;
 	private final boolean m_isTraversable;
 	
-	public PlaceSceneArtifactBrushBehaviour(ISceneModel model, URI modelName, Direction direction, boolean isTraversable)
+	public PlaceSceneArtifactBrushBehaviour(IImmutableSceneModel model, URI modelName, Direction direction, boolean isTraversable)
 	{
 		m_model = model;
 		m_modelName = modelName;

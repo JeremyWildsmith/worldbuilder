@@ -20,33 +20,31 @@ package io.github.jevaengine.builder.worldbuilder.world;
 
 import io.github.jevaengine.IDisposable;
 import io.github.jevaengine.builder.ui.FileInputQueryFactory;
-import io.github.jevaengine.builder.ui.MessageBoxFactory;
-import io.github.jevaengine.builder.ui.TextInputQueryFactory;
 import io.github.jevaengine.builder.ui.FileInputQueryFactory.FileInputQuery;
 import io.github.jevaengine.builder.ui.FileInputQueryFactory.FileInputQueryMode;
 import io.github.jevaengine.builder.ui.FileInputQueryFactory.IFileInputQueryObserver;
+import io.github.jevaengine.builder.ui.MessageBoxFactory;
 import io.github.jevaengine.builder.ui.MessageBoxFactory.IMessageBoxObserver;
 import io.github.jevaengine.builder.ui.MessageBoxFactory.MessageBox;
+import io.github.jevaengine.builder.ui.TextInputQueryFactory;
 import io.github.jevaengine.builder.ui.TextInputQueryFactory.ITextInputQueryObserver;
 import io.github.jevaengine.builder.ui.TextInputQueryFactory.TextInputQuery;
 import io.github.jevaengine.builder.worldbuilder.ui.ConfigureEntityQueryFactory;
-import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQueryFactory;
 import io.github.jevaengine.builder.worldbuilder.ui.ConfigureEntityQueryFactory.ConfigureEntityQuery;
 import io.github.jevaengine.builder.worldbuilder.ui.ConfigureEntityQueryFactory.IConfigureEntityQueryObserver;
 import io.github.jevaengine.builder.worldbuilder.ui.ConfigureZoneQueryFactory;
 import io.github.jevaengine.builder.worldbuilder.ui.ConfigureZoneQueryFactory.ConfigureZoneQuery;
 import io.github.jevaengine.builder.worldbuilder.ui.ConfigureZoneQueryFactory.IConfigureZoneQueryObserver;
-import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQueryFactory.ISelectBrushQueryObserver;
-import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQueryFactory.SelectBrushQuery;
+import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQuery;
 import io.github.jevaengine.builder.worldbuilder.world.Brush.IBrushBehaviorObserver;
 import io.github.jevaengine.builder.worldbuilder.world.EditorEntity.DummyEntity;
 import io.github.jevaengine.builder.worldbuilder.world.EditorWorldFactory.EditorWeatherFactory;
+import io.github.jevaengine.builder.worldbuilder.world.EditorWorldFactory.EditorWeatherFactory.EditorWeather;
 import io.github.jevaengine.builder.worldbuilder.world.EditorZone.DummyZone;
 import io.github.jevaengine.builder.worldbuilder.world.ResizeZoneBrushBehaviour.IResizeZoneBrushBehaviourHandler;
 import io.github.jevaengine.builder.worldbuilder.world.SampleSceneArtifactBrush.ISceneArtifactSampleHandler;
 import io.github.jevaengine.config.ValueSerializationException;
 import io.github.jevaengine.config.json.JsonVariable;
-import io.github.jevaengine.world.scene.camera.ControlledCamera;
 import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.joystick.InputKeyEvent;
 import io.github.jevaengine.joystick.InputKeyEvent.KeyEventType;
@@ -78,24 +76,27 @@ import io.github.jevaengine.util.Nullable;
 import io.github.jevaengine.util.Observers;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration;
 import io.github.jevaengine.world.IWeatherFactory;
+import io.github.jevaengine.world.IWeatherFactory.IWeather;
 import io.github.jevaengine.world.IWeatherFactory.WeatherConstructionException;
 import io.github.jevaengine.world.World;
 import io.github.jevaengine.world.entity.IEntity;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
+import io.github.jevaengine.world.scene.camera.ControlledCamera;
 import io.github.jevaengine.world.scene.effect.DebugDrawComponent;
 import io.github.jevaengine.world.scene.effect.HideEntityObstructionsEffect;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
-
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
+import java.util.logging.Level;
+import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -133,23 +134,30 @@ public class EditorWorldViewFactory
 	{
 		Observers observers = new Observers();
 		
-		Window window = m_windowFactory.create(WINDOW_LAYOUT, new EditorWorldViewBehaviourInjector(observers, world, m_sceneBufferFactory, m_modelFactory));
+		Brush brush = new Brush();
+		SelectBrushQuery selectBrushQuery = new SelectBrushQuery(new File(m_baseDirectory), brush, m_modelFactory);
+		
+		Window window = m_windowFactory.create(WINDOW_LAYOUT, new EditorWorldViewBehaviourInjector(observers, world, m_sceneBufferFactory, m_modelFactory, brush, selectBrushQuery));
 		m_windowManager.addWindow(window);
 
-		return new EditorWorldView(window, observers, world.getWorld());
+		return new EditorWorldView(window, observers, world.getWorld(), selectBrushQuery);
 	}
 	
 	public static final class EditorWorldView implements IDisposable
 	{
+		private final Logger m_logger = LoggerFactory.getLogger(EditorWorldView.class);
+		
 		private final Window m_window;
 		private final IObserverRegistry m_observers;
 		private final World m_world;
+		private final SelectBrushQuery m_selectBrushQuery;
 		
-		private EditorWorldView(Window window, IObserverRegistry observers, World world)
+		private EditorWorldView(Window window, IObserverRegistry observers, World world, SelectBrushQuery selectBrushQuery)
 		{
 			m_observers = observers;
 			m_window = window;
 			m_world = world;
+			m_selectBrushQuery = selectBrushQuery;
 		}
 		
 		@Override
@@ -157,6 +165,17 @@ public class EditorWorldViewFactory
 		{
 			m_window.dispose();
 			m_world.dispose();
+			
+			try {
+				SwingUtilities.invokeAndWait(new Runnable() {
+					@Override
+					public void run() {
+						m_selectBrushQuery.dispose();
+					}
+				});
+			} catch (InterruptedException | InvocationTargetException ex) {
+				m_logger.error("Unable to destory brush selection query.", ex);
+			}
 		}
 		
 		public void setVisible(boolean isVisible)
@@ -183,7 +202,9 @@ public class EditorWorldViewFactory
 	private class EditorWorldViewBehaviourInjector extends WindowBehaviourInjector
 	{
 		
-		private final Brush m_workingBrush = new Brush();
+		private final Brush m_workingBrush;
+		private final SelectBrushQuery m_selectBrushQuery;
+		
 		private final EditorWorld m_world;
 		private final ControlledCamera m_camera;
 		private final ISceneModelFactory m_modelFactory;
@@ -192,7 +213,7 @@ public class EditorWorldViewFactory
 		
 		private final Logger m_logger = LoggerFactory.getLogger(EditorWorldViewBehaviourInjector.class);
 		
-		public EditorWorldViewBehaviourInjector(Observers observers, EditorWorld world, ISceneBufferFactory sceneBufferFactory, ISceneModelFactory modelFactory)
+		public EditorWorldViewBehaviourInjector(Observers observers, EditorWorld world, ISceneBufferFactory sceneBufferFactory, ISceneModelFactory modelFactory, Brush workingBrush, SelectBrushQuery selectBrushQuery)
 		{
 			m_observers = observers;
 			m_world = world;
@@ -201,6 +222,9 @@ public class EditorWorldViewFactory
 			m_camera.addEffect(new DebugDrawComponent());
 			m_camera.addEffect(new HideEntityObstructionsEffect(m_world.getCursor().getEntity(), 0.4F));
 			m_modelFactory = modelFactory;
+			
+			m_selectBrushQuery = selectBrushQuery;
+			m_workingBrush = workingBrush;
 		}
 		
 		private void displayMessage(String message)
@@ -494,6 +518,10 @@ public class EditorWorldViewFactory
 			logicTimer.getObservers().add(new ITimerObserver() {
 				@Override
 				public void update(int deltaTime) {
+					if(m_selectBrushQuery.isVisible() != EditorWorldViewBehaviourInjector.this.isVisible())
+						m_selectBrushQuery.setVisible(EditorWorldViewBehaviourInjector.this.isVisible());
+					
+					m_selectBrushQuery.poll();
 					m_world.getWorld().update(deltaTime);
 					Vector3F coordinates = m_world.getCursor().getLocation();
 					lblCursorCoordinates.setText(String.format("%f, %f, %f; Snap: %f", coordinates.x, coordinates.y, coordinates.z, cameraController.getCursorSnapGridSize()));
@@ -553,7 +581,8 @@ public class EditorWorldViewFactory
 				public void onPress() {
 					try
 					{
-						URI currentWeather = m_world.getWeather() == null ? m_baseDirectory : m_world.getWeather().getName();
+						EditorWeather weather = m_world.getWeather();
+						URI currentWeather = weather == null ? m_baseDirectory : weather.getName();
 						
 						final FileInputQuery query = new FileInputQueryFactory(m_windowManager, m_windowFactory, m_baseDirectory).create(FileInputQueryMode.OpenFile, "Weather: ", currentWeather);
 						query.getObservers().add(new IFileInputQueryObserver() {			
@@ -680,25 +709,6 @@ public class EditorWorldViewFactory
 				}
 			});
 
-			getControl(Button.class, "btnApplyBrush").getObservers().add(new IButtonPressObserver() {
-				@Override
-				public void onPress() {
-					try
-					{
-						final SelectBrushQuery query = new SelectBrushQueryFactory(m_windowManager, m_windowFactory, m_modelFactory, m_baseDirectory).create(m_workingBrush);
-						query.getObservers().add(new ISelectBrushQueryObserver() {
-							@Override
-							public void close() {
-								query.dispose();
-							}
-						});
-					} catch (WindowConstructionException e)
-					{
-						m_logger.error("Could not construt brush selection dialogue", e);
-					}
-				}
-			});
-			
 			getControl(Button.class, "btnClearBrush").getObservers().add(new IButtonPressObserver() {
 				@Override
 				public void onPress() {
@@ -712,20 +722,7 @@ public class EditorWorldViewFactory
 					m_workingBrush.setBehaviour(new SampleSceneArtifactBrush(new ISceneArtifactSampleHandler() {
 						@Override
 						public void sample(EditorSceneArtifact sample) {
-							m_workingBrush.setBehaviour(new NullBrushBehaviour());
-							try
-							{
-								final SelectBrushQuery query = new SelectBrushQueryFactory(m_windowManager, m_windowFactory, m_modelFactory, m_baseDirectory).create(m_workingBrush, sample);
-								query.getObservers().add(new ISelectBrushQueryObserver() {
-									@Override
-									public void close() {
-										query.dispose();
-									}
-								});
-							} catch (WindowConstructionException e)
-							{
-								m_logger.error("Could not construt brush selection dialogue", e);
-							}
+							m_workingBrush.setBehaviour(new PlaceSceneArtifactBrushBehaviour(sample.getModel(), sample.getModelName(), sample.getDirection(), sample.isTraversable()));					
 						}
 					}));
 				}
