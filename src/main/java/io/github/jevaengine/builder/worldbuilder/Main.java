@@ -206,7 +206,7 @@ public class Main implements WindowListener, Runnable
 			
 			ExtentionMuxedGraphicFactory muxedGraphicFactory = new ExtentionMuxedGraphicFactory(new BufferedImageGraphicFactory(frameRenderer, assetStreamFactory));
 			IGraphicFactory graphicFactory = new CachedGraphicFactory(muxedGraphicFactory);
-			muxedGraphicFactory.put(".sgf", new ShadedGraphicFactory(new DefaultGraphicShaderFactory(), graphicFactory, configurationFactory));
+			muxedGraphicFactory.put(".sgf", new ShadedGraphicFactory(new DefaultGraphicShaderFactory(configurationFactory), graphicFactory, configurationFactory));
 			
 			bind(IGraphicFactory.class).toInstance(graphicFactory);
 		
