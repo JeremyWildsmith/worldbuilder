@@ -37,6 +37,7 @@ import io.github.jevaengine.world.scene.model.ISceneModel;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public final class EditorSceneArtifact
@@ -131,6 +132,15 @@ public final class EditorSceneArtifact
 		EditorSceneArtifact tile = (EditorSceneArtifact) o;
 
 		return (tile.m_isTraversable == this.m_isTraversable && tile.getDirection() == this.getDirection() && tile.getModelName().compareTo(this.getModelName()) == 0);
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 47 * hash + Objects.hashCode(this.m_sceneModelName);
+		hash = 47 * hash + Objects.hashCode(this.m_direction);
+		hash = 47 * hash + (this.m_isTraversable ? 1 : 0);
+		return hash;
 	}
 
 	public class DummySceneArtifact implements IEntity
