@@ -45,18 +45,20 @@ public final class EditorSceneArtifact
 	private static final AtomicInteger m_unnamedCount = new AtomicInteger();
 	
 	private URI m_sceneModelName;
-	private IImmutableSceneModel m_sceneModel;
+	private ISceneModel m_sceneModel;
 	private Direction m_direction;
 	private boolean m_isTraversable;
+	private final boolean m_isStatic;
+	
+	private final DummySceneArtifact m_dummy;
 
-	private DummySceneArtifact m_dummy;
-
-	public EditorSceneArtifact(IImmutableSceneModel sceneModel, URI sceneModelName, Direction direction, boolean isTraversable)
+	public EditorSceneArtifact(IImmutableSceneModel sceneModel, URI sceneModelName, Direction direction, boolean isTraversable, boolean isStatic)
 	{
 		m_direction = direction;
 		m_isTraversable = isTraversable;
 		m_sceneModelName = sceneModelName;
-		m_sceneModel = sceneModel;
+		m_sceneModel = sceneModel.clone();
+		m_isStatic = isStatic;
 		m_dummy = new DummySceneArtifact(this.getClass().getName() + m_unnamedCount.getAndIncrement());
 	}
 
@@ -65,11 +67,16 @@ public final class EditorSceneArtifact
 		return m_dummy;
 	}
 
+	public boolean isStatic()
+	{
+		return m_isStatic;
+	}
+	
 	public void setTraversable(boolean isTraversable)
 	{
 		m_isTraversable = isTraversable;
 	}
-
+	
 	public boolean isTraversable()
 	{
 		return m_isTraversable;
@@ -117,30 +124,43 @@ public final class EditorSceneArtifact
 		artifactDecl.isTraversable = isTraversable();
 		artifactDecl.model = m_sceneModelName.toString();
 		artifactDecl.direction = m_direction;
-	
+		artifactDecl.isStatic = m_isStatic;
+		
 		return artifactDecl;
-	}
-	
-	@Override
-	public boolean equals(Object o)
-	{
-		if (o == this)
-			return true;
-		else if (!(o instanceof EditorSceneArtifact))
-			return false;
-
-		EditorSceneArtifact tile = (EditorSceneArtifact) o;
-
-		return (tile.m_isTraversable == this.m_isTraversable && tile.getDirection() == this.getDirection() && tile.getModelName().compareTo(this.getModelName()) == 0);
 	}
 
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 47 * hash + Objects.hashCode(this.m_sceneModelName);
-		hash = 47 * hash + Objects.hashCode(this.m_direction);
-		hash = 47 * hash + (this.m_isTraversable ? 1 : 0);
+		int hash = 5;
+		hash = 97 * hash + Objects.hashCode(this.m_sceneModelName);
+		hash = 97 * hash + Objects.hashCode(this.m_direction);
+		hash = 97 * hash + (this.m_isTraversable ? 1 : 0);
+		hash = 97 * hash + (this.m_isStatic ? 1 : 0);
 		return hash;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final EditorSceneArtifact other = (EditorSceneArtifact) obj;
+		if (!Objects.equals(this.m_sceneModelName, other.m_sceneModelName)) {
+			return false;
+		}
+		if (this.m_direction != other.m_direction) {
+			return false;
+		}
+		if (this.m_isTraversable != other.m_isTraversable) {
+			return false;
+		}
+		if (this.m_isStatic != other.m_isStatic) {
+			return false;
+		}
+		return true;
 	}
 
 	public class DummySceneArtifact implements IEntity
@@ -231,12 +251,15 @@ public final class EditorSceneArtifact
 		}
 
 		@Override
-		public void update(int delta) { }
+		public void update(int delta)
+		{	
+			m_sceneModel.update(delta);
+		}
 		
 		@Override
 		public boolean isStatic()
 		{
-			return true;
+			return m_isStatic;
 		}
 		
 		public IEntityTaskModel getTaskModel()

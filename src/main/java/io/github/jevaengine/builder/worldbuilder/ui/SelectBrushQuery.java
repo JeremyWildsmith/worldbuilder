@@ -78,8 +78,12 @@ public class SelectBrushQuery extends javax.swing.JFrame {
 				
 				try
 				{
+					Direction direction = lstDirection.getModel().getSelectedItem() == null ? Direction.XYPlus : (Direction)lstDirection.getModel().getSelectedItem();
+					
 					ISceneModel model = m_modelFactory.create(relativeUri);
-					m_brush.setBehaviour(new PlaceSceneArtifactBrushBehaviour(model, relativeUri, Direction.XYPlus, btnTraversable.isSelected()));
+					model.setDirection(direction);
+					
+					m_brush.setBehaviour(new PlaceSceneArtifactBrushBehaviour(model, relativeUri, direction, btnTraversable.isSelected(), btnStatic.isSelected()));
 				} catch (ISceneModelFactory.SceneModelConstructionException e)
 				{
 					m_logger.error("Unable to load scene model", e);
@@ -105,6 +109,7 @@ public class SelectBrushQuery extends javax.swing.JFrame {
         browseBrushTree = new javax.swing.JTree();
         btnRefresh = new javax.swing.JButton();
         lstDirection = new javax.swing.JComboBox<Direction>();
+        btnStatic = new javax.swing.JToggleButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -124,6 +129,9 @@ public class SelectBrushQuery extends javax.swing.JFrame {
 
         lstDirection.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
+        btnStatic.setSelected(true);
+        btnStatic.setText("Static");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -133,11 +141,14 @@ public class SelectBrushQuery extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lstDirection, 0, 139, Short.MAX_VALUE)
+                        .addComponent(lstDirection, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnTraversable)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnStatic)
+                        .addGap(43, 43, 43)
                         .addComponent(btnRefresh)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnTraversable)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -147,7 +158,8 @@ public class SelectBrushQuery extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnTraversable)
                     .addComponent(btnRefresh)
-                    .addComponent(lstDirection, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lstDirection, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnStatic))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
                 .addContainerGap())
@@ -246,7 +258,7 @@ public class SelectBrushQuery extends javax.swing.JFrame {
 				List<SelectBrushChild> children = new ArrayList<>();
 				for(File f : childrenOfParent)
 				{
-					if(f.isDirectory() || f.getName().toLowerCase().endsWith(".jmf"))
+					if(f.isDirectory() || f.getName().toLowerCase().endsWith(".jmf") || f.getName().toLowerCase().endsWith(".jpar"))
 						children.add(new SelectBrushChild(f));
 				}
 
@@ -296,6 +308,7 @@ public class SelectBrushQuery extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTree browseBrushTree;
     private javax.swing.JButton btnRefresh;
+    private javax.swing.JToggleButton btnStatic;
     private javax.swing.JToggleButton btnTraversable;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JComboBox<Direction> lstDirection;

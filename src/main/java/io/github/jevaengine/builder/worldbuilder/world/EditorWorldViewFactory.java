@@ -722,7 +722,7 @@ public class EditorWorldViewFactory
 					m_workingBrush.setBehaviour(new SampleSceneArtifactBrush(new ISceneArtifactSampleHandler() {
 						@Override
 						public void sample(EditorSceneArtifact sample) {
-							m_workingBrush.setBehaviour(new PlaceSceneArtifactBrushBehaviour(sample.getModel(), sample.getModelName(), sample.getDirection(), sample.isTraversable()));					
+							m_workingBrush.setBehaviour(new PlaceSceneArtifactBrushBehaviour(sample.getModel(), sample.getModelName(), sample.getDirection(), sample.isTraversable(), sample.isStatic()));					
 						}
 					}));
 				}

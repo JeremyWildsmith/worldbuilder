@@ -39,6 +39,7 @@ import io.github.jevaengine.world.entity.NullEntityTaskModel;
 import io.github.jevaengine.world.entity.WorldAssociationException;
 import io.github.jevaengine.world.physics.IPhysicsBody;
 import io.github.jevaengine.world.physics.NonparticipantPhysicsBody;
+import io.github.jevaengine.world.physics.PhysicsBodyShape;
 import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
 import io.github.jevaengine.world.scene.model.IImmutableSceneModel.ISceneModelComponent;
 import io.github.jevaengine.world.scene.model.ISceneModel;
@@ -239,7 +240,12 @@ public final class EditorZone
 			{
 				throw new SceneModelNotCloneableException(new Exception("Editor zone model cannot be cloned."));
 			}
-
+			
+			public PhysicsBodyShape getBodyShape()
+			{
+				return new PhysicsBodyShape();
+			}
+			
 			@Override
 			public Collection<ISceneModelComponent> getComponents(Matrix3X3 projection)
 			{

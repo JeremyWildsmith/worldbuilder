@@ -27,12 +27,15 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jScrollPane1" max="32767" attributes="0"/>
-                  <Group type="102" alignment="0" attributes="0">
-                      <Component id="lstDirection" pref="139" max="32767" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnRefresh" min="-2" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="lstDirection" min="-2" pref="81" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnTraversable" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btnStatic" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
+                      <Component id="btnRefresh" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -47,6 +50,7 @@
                   <Component id="btnTraversable" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnRefresh" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="lstDirection" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnStatic" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jScrollPane1" pref="267" max="32767" attributes="0"/>
@@ -101,6 +105,12 @@
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Direction&gt;"/>
       </AuxValues>
+    </Component>
+    <Component class="javax.swing.JToggleButton" name="btnStatic">
+      <Properties>
+        <Property name="selected" type="boolean" value="true"/>
+        <Property name="text" type="java.lang.String" value="Static"/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

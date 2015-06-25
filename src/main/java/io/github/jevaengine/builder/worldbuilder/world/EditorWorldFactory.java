@@ -41,6 +41,7 @@ import io.github.jevaengine.world.physics.IPhysicsWorldFactory;
 import io.github.jevaengine.world.scene.ISceneBuffer;
 import io.github.jevaengine.world.scene.model.IAnimationSceneModelFactory;
 import io.github.jevaengine.world.scene.model.ISceneModel;
+import io.github.jevaengine.world.scene.model.ISceneModelFactory;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory.SceneModelConstructionException;
 import java.awt.Graphics2D;
 
@@ -61,7 +62,7 @@ public final class EditorWorldFactory extends DefaultWorldFactory
 			ISpriteFactory spriteFactory, IAudioClipFactory audioClipFactory,
 			IPhysicsWorldFactory physicsWorldFactory,
 			IFontFactory fontFactory,
-			IAnimationSceneModelFactory animationSceneModelFactory,
+			ISceneModelFactory animationSceneModelFactory,
 			IWeatherFactory weatherFactory,
 			IEffectMapFactory effectMapFactory) {
 	
@@ -79,12 +80,12 @@ public final class EditorWorldFactory extends DefaultWorldFactory
 		{
 			URI modelUri = context.resolve(new URI(artifactDecl.model));
 			
-			ISceneModel model = m_animationSceneModelFactory.create(modelUri);
+			ISceneModel model = m_sceneModelFactory.create(modelUri);
 			model.setDirection(artifactDecl.direction);
-			return new EditorSceneArtifact(model, modelUri, artifactDecl.direction, artifactDecl.isTraversable).getEntity();
+			return new EditorSceneArtifact(model, modelUri, artifactDecl.direction, artifactDecl.isTraversable, artifactDecl.isStatic).getEntity();
 		} catch (SceneModelConstructionException | URISyntaxException e)
 		{
-			throw new EntityConstructionException("Unnamed Tile", e);
+			throw new EntityConstructionException("Unnamed Scene Artifact", e);
 		}
 	}
 	
@@ -93,7 +94,7 @@ public final class EditorWorldFactory extends DefaultWorldFactory
 	{
 		try
 		{
-			EditorEntity e = new EditorEntity(m_fontFactory, m_animationSceneModelFactory, entityConfig.name, entityConfig.type, entityConfig.config == null ? null : new URI(entityConfig.config));
+			EditorEntity e = new EditorEntity(m_fontFactory, m_sceneModelFactory, entityConfig.name, entityConfig.type, entityConfig.config == null ? null : new URI(entityConfig.config));
 			
 			if(entityConfig.auxConfig != null)
 			{

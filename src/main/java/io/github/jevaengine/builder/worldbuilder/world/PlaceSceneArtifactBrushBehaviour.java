@@ -31,13 +31,15 @@ public final class PlaceSceneArtifactBrushBehaviour implements IBrushBehaviour
 	private final URI m_modelName;
 	private final Direction m_direction;
 	private final boolean m_isTraversable;
+	private final boolean m_isStatic;
 	
-	public PlaceSceneArtifactBrushBehaviour(IImmutableSceneModel model, URI modelName, Direction direction, boolean isTraversable)
+	public PlaceSceneArtifactBrushBehaviour(IImmutableSceneModel model, URI modelName, Direction direction, boolean isTraversable, boolean isStatic)
 	{
 		m_model = model;
 		m_modelName = modelName;
 		m_direction = direction;
 		m_isTraversable = isTraversable;
+		m_isStatic = isStatic;
 	}
 	
 	@Override
@@ -51,6 +53,6 @@ public final class PlaceSceneArtifactBrushBehaviour implements IBrushBehaviour
 	{
 		ISceneModel model = m_model.clone();
 		model.setDirection(m_direction);
-		world.setTile(new EditorSceneArtifact(model, m_modelName, m_direction, m_isTraversable), location);
+		world.setTile(new EditorSceneArtifact(model, m_modelName, m_direction, m_isTraversable, m_isStatic), location);
 	}
 }

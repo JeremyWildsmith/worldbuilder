@@ -75,13 +75,23 @@ import org.slf4j.LoggerFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Provider;
 import com.google.inject.name.Names;
+import io.github.jevaengine.audio.IAudioClipFactory;
 import io.github.jevaengine.graphics.DefaultGraphicShaderFactory;
+import io.github.jevaengine.graphics.DefaultSpriteFactory;
 import io.github.jevaengine.graphics.ExtentionMuxedGraphicFactory;
+import io.github.jevaengine.graphics.ISpriteFactory;
 import io.github.jevaengine.graphics.ShadedGraphicFactory;
 import io.github.jevaengine.world.IEffectMapFactory;
 import io.github.jevaengine.world.TiledEffectMapFactory;
-import java.nio.file.Paths;
+import io.github.jevaengine.world.scene.model.ExtentionMuxedSceneModelFactory;
+import io.github.jevaengine.world.scene.model.ISceneModelFactory;
+import io.github.jevaengine.world.scene.model.particle.DefaultParticleEmitterFactory;
+import io.github.jevaengine.world.scene.model.particle.IParticleEmitter;
+import io.github.jevaengine.world.scene.model.particle.IParticleEmitterFactory;
+import io.github.jevaengine.world.scene.model.sprite.SpriteSceneModelFactory;
+import javax.inject.Inject;
 
 public class Main implements WindowListener, Runnable
 {
@@ -196,26 +206,88 @@ public class Main implements WindowListener, Runnable
 			bind(IWorldFactory.class).to(EditorWorldFactory.class);
 			bind(ISceneBufferFactory.class).toInstance(m_sceneBufferFactory);
 			bind(IEffectMapFactory.class).to(TiledEffectMapFactory.class);
+			bind(IParticleEmitterFactory.class).to(DefaultParticleEmitterFactory.class);
+			bind(IParticleEmitterFactory.class).to(DefaultParticleEmitterFactory.class);
+			bind(IRenderer.class).toInstance(new FrameRenderer(m_frame, false, RenderFitMode.Stretch));
 			
-			IAssetStreamFactory assetStreamFactory = new BuilderAssetStreamFactory(m_assetSource);
-			IRenderer frameRenderer = new FrameRenderer(m_frame, false, RenderFitMode.Stretch);
+			bind(IAssetStreamFactory.class).toProvider(new Provider<IAssetStreamFactory>() {
+				@Override
+				public IAssetStreamFactory get() {
+					return new BuilderAssetStreamFactory(m_assetSource);
+				}
+			});
 			
-			IConfigurationFactory configurationFactory = new CachedConfigurationFactory(new JsonConfigurationFactory(assetStreamFactory));
-			bind(IAssetStreamFactory.class).toInstance(assetStreamFactory);
-			bind(IRenderer.class).toInstance(frameRenderer);
+			bind(IConfigurationFactory.class).toProvider(new ConfigurationFactoryProvider(m_enableCache));
 			
-			ExtentionMuxedGraphicFactory muxedGraphicFactory = new ExtentionMuxedGraphicFactory(new BufferedImageGraphicFactory(frameRenderer, assetStreamFactory));
-			IGraphicFactory graphicFactory = new CachedGraphicFactory(muxedGraphicFactory);
-			muxedGraphicFactory.put(".sgf", new ShadedGraphicFactory(new DefaultGraphicShaderFactory(configurationFactory), graphicFactory, configurationFactory));
+			bind(IGraphicFactory.class).toProvider(new Provider<IGraphicFactory>() {
+				@Inject
+				private IConfigurationFactory configurationFactory;
+
+				@Inject
+				private IAssetStreamFactory assetStreamFactory;
+				
+				@Inject
+				private IRenderer renderer;
+				
+				@Override
+				public IGraphicFactory get() {
+					ExtentionMuxedGraphicFactory muxedGraphicFactory = new ExtentionMuxedGraphicFactory(new BufferedImageGraphicFactory(renderer, assetStreamFactory));
+					IGraphicFactory graphicFactory = new CachedGraphicFactory(muxedGraphicFactory);
+					muxedGraphicFactory.put(".sgf", new ShadedGraphicFactory(new DefaultGraphicShaderFactory(configurationFactory), graphicFactory, configurationFactory));
+					return graphicFactory;
+				}
+			});
 			
-			bind(IGraphicFactory.class).toInstance(graphicFactory);
+			bind(ISceneModelFactory.class).toProvider(new Provider<ISceneModelFactory>() {
+				@Inject
+				private IAssetStreamFactory assetStreamFactory;
+				
+				@Inject
+				private ISpriteFactory spriteFactory;
+				
+				@Inject
+				private IConfigurationFactory configurationFactory;
+				
+				@Inject
+				private IAudioClipFactory audioClipFactory;
+				
+				@Inject
+				private IParticleEmitterFactory particleEmitterFactory;
+				
+				@Override
+				public ISceneModelFactory get() {
+					ExtentionMuxedSceneModelFactory muxedFactory = new ExtentionMuxedSceneModelFactory(new SpriteSceneModelFactory(configurationFactory, spriteFactory, audioClipFactory));
+					muxedFactory.put("jpar", particleEmitterFactory);
+					
+					return muxedFactory;
+				}
+			});
+		}
+	}
+	
+	private static final class ConfigurationFactoryProvider implements Provider<IConfigurationFactory>
+	{
+		private final boolean m_isCached;
 		
-			bind(IRenderer.class).toInstance(frameRenderer);
-			
-			if(m_enableCache)
-				bind(IConfigurationFactory.class).toInstance(new CachedConfigurationFactory(new JsonConfigurationFactory(assetStreamFactory)));
-			else
-				bind(IConfigurationFactory.class).toInstance(new JsonConfigurationFactory(assetStreamFactory));
+		@Inject
+		private IAssetStreamFactory m_assetStreamFactory;
+		
+		private CachedConfigurationFactory m_configurationFactory;
+		
+		public ConfigurationFactoryProvider(boolean isCached)
+		{
+			m_isCached = isCached;
+		}
+		
+		@Override
+		public IConfigurationFactory get()
+		{
+			if(m_isCached && m_configurationFactory == null)
+			{
+				m_configurationFactory = new CachedConfigurationFactory(new JsonConfigurationFactory(m_assetStreamFactory));
+				return m_configurationFactory;
+			} else
+				return new JsonConfigurationFactory(m_assetStreamFactory);
 		}
 	}
 	

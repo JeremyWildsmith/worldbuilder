@@ -35,6 +35,7 @@ import io.github.jevaengine.world.IParallelWorldFactory;
 import io.github.jevaengine.world.IWeatherFactory;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
 import io.github.jevaengine.world.scene.model.IAnimationSceneModelFactory;
+import io.github.jevaengine.world.scene.model.ISceneModelFactory;
 
 import java.net.URI;
 
@@ -47,7 +48,7 @@ public class WorldBuilder extends DefaultGame
 	
 	private Logger m_logger = LoggerFactory.getLogger(WorldBuilder.class);
 	
-	public WorldBuilder(IInputSource inputSource, IConfigurationFactory configurationFactory, ISceneBufferFactory sceneBufferFactory, ISpriteFactory spriteFactory, IWindowFactory windowFactory, IParallelWorldFactory worldFactory, IFontFactory fontFactory, IAnimationSceneModelFactory animationSceneModelFactory, IWeatherFactory weatherFactory, IEffectMapFactory effectMapFactory, Vector2D resolution, URI baseDirectory)
+	public WorldBuilder(IInputSource inputSource, IConfigurationFactory configurationFactory, ISceneBufferFactory sceneBufferFactory, ISpriteFactory spriteFactory, IWindowFactory windowFactory, IParallelWorldFactory worldFactory, IFontFactory fontFactory, ISceneModelFactory sceneModelFactory, IWeatherFactory weatherFactory, IEffectMapFactory effectMapFactory, Vector2D resolution, URI baseDirectory)
 	{
 		super(inputSource, resolution);
 		
@@ -62,7 +63,7 @@ public class WorldBuilder extends DefaultGame
 		
 		try
 		{
-			new FloatingToolbarFactory(getWindowManager(), windowFactory, sceneBufferFactory, animationSceneModelFactory, worldFactory, fontFactory, weatherFactory, effectMapFactory, baseDirectory).create().center();
+			new FloatingToolbarFactory(getWindowManager(), windowFactory, sceneBufferFactory, sceneModelFactory, worldFactory, fontFactory, weatherFactory, effectMapFactory, baseDirectory).create().center();
 		} catch (WindowConstructionException e)
 		{
 			m_logger.error("Error constructing world builder toolbar.", e);

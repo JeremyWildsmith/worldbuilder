@@ -22,6 +22,7 @@ import io.github.jevaengine.math.Matrix3X3;
 import io.github.jevaengine.math.Rect3F;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.world.Direction;
+import io.github.jevaengine.world.physics.PhysicsBodyShape;
 import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
 import io.github.jevaengine.world.scene.model.ISceneModel;
 import java.awt.Color;
@@ -55,6 +56,12 @@ public final class ResizeZoneBrushBehaviour implements IBrushBehaviour
 				throw new SceneModelNotCloneableException(new Exception("Not cloneable."));
 			}
 
+			@Override
+			public PhysicsBodyShape getBodyShape()
+			{
+				return new PhysicsBodyShape();
+			}
+			
 			@Override
 			public Collection<ISceneModelComponent> getComponents(final Matrix3X3 projection)
 			{
