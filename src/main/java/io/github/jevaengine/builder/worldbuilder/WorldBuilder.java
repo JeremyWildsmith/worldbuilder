@@ -34,11 +34,8 @@ import io.github.jevaengine.world.IEffectMapFactory;
 import io.github.jevaengine.world.IParallelWorldFactory;
 import io.github.jevaengine.world.IWeatherFactory;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
-import io.github.jevaengine.world.scene.model.IAnimationSceneModelFactory;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
-
 import java.net.URI;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -20,10 +20,10 @@ package io.github.jevaengine.builder.worldbuilder.ui;
 
 import io.github.jevaengine.IDisposable;
 import io.github.jevaengine.builder.ui.FileInputQueryFactory;
-import io.github.jevaengine.builder.ui.MessageBoxFactory;
 import io.github.jevaengine.builder.ui.FileInputQueryFactory.FileInputQuery;
 import io.github.jevaengine.builder.ui.FileInputQueryFactory.FileInputQueryMode;
 import io.github.jevaengine.builder.ui.FileInputQueryFactory.IFileInputQueryObserver;
+import io.github.jevaengine.builder.ui.MessageBoxFactory;
 import io.github.jevaengine.builder.ui.MessageBoxFactory.IMessageBoxObserver;
 import io.github.jevaengine.builder.ui.MessageBoxFactory.MessageBox;
 import io.github.jevaengine.math.Vector2D;
@@ -39,10 +39,8 @@ import io.github.jevaengine.ui.WindowManager;
 import io.github.jevaengine.util.IObserverRegistry;
 import io.github.jevaengine.util.Nullable;
 import io.github.jevaengine.util.Observers;
-
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -5,13 +5,6 @@
  */
 package io.github.jevaengine.builder.worldbuilder.ui;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import javax.swing.tree.TreeModel;
 import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQuery.FileTreeModel.SelectBrushChild;
 import io.github.jevaengine.builder.worldbuilder.world.Brush;
 import io.github.jevaengine.builder.worldbuilder.world.PlaceSceneArtifactBrushBehaviour;
@@ -19,14 +12,20 @@ import io.github.jevaengine.util.Nullable;
 import io.github.jevaengine.world.Direction;
 import io.github.jevaengine.world.scene.model.ISceneModel;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
+import java.io.File;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.swing.tree.TreeModel;
 
 /**
  *
@@ -172,7 +171,7 @@ public class SelectBrushQuery extends javax.swing.JFrame {
 		browseBrushTree.setModel(new FileTreeModel(m_baseDirectory));
     }//GEN-LAST:event_btnRefreshActionPerformed
 
-	public static class FileTreeModel implements TreeModel
+	public static class FileTreeModel implements javax.swing.tree.TreeModel
 	{
 		
 		private final SelectBrushChild m_root;

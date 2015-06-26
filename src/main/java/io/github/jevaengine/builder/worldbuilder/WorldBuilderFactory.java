@@ -33,11 +33,8 @@ import io.github.jevaengine.world.IWeatherFactory;
 import io.github.jevaengine.world.IWorldFactory;
 import io.github.jevaengine.world.ThreadPooledWorldFactory;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
-import io.github.jevaengine.world.scene.model.IAnimationSceneModelFactory;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
-
 import java.net.URI;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 

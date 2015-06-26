@@ -29,7 +29,6 @@ import io.github.jevaengine.math.Vector2D;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.util.IObserverRegistry;
 import io.github.jevaengine.util.NullObservers;
-import io.github.jevaengine.world.DefaultWorldFactory;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.ZoneDeclaration;
 import io.github.jevaengine.world.Direction;
 import io.github.jevaengine.world.World;
@@ -44,7 +43,6 @@ import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
 import io.github.jevaengine.world.scene.model.IImmutableSceneModel.ISceneModelComponent;
 import io.github.jevaengine.world.scene.model.ISceneModel;
 import java.awt.BasicStroke;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
@@ -54,7 +52,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

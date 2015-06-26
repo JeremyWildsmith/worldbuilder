@@ -39,16 +39,13 @@ import io.github.jevaengine.world.entity.IEntityFactory;
 import io.github.jevaengine.world.entity.IEntityFactory.EntityConstructionException;
 import io.github.jevaengine.world.physics.IPhysicsWorldFactory;
 import io.github.jevaengine.world.scene.ISceneBuffer;
-import io.github.jevaengine.world.scene.model.IAnimationSceneModelFactory;
 import io.github.jevaengine.world.scene.model.ISceneModel;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory.SceneModelConstructionException;
 import java.awt.Graphics2D;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
-
 import javax.inject.Inject;
 
 public final class EditorWorldFactory extends DefaultWorldFactory

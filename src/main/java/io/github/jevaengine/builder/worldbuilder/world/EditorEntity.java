@@ -44,13 +44,11 @@ import io.github.jevaengine.world.scene.model.ISceneModel;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory.SceneModelConstructionException;
 import io.github.jevaengine.world.scene.model.NullSceneModel;
-
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

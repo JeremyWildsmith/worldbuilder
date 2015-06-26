@@ -22,7 +22,6 @@ import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.world.Direction;
 import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
 import io.github.jevaengine.world.scene.model.ISceneModel;
-
 import java.net.URI;
 
 public final class PlaceSceneArtifactBrushBehaviour implements IBrushBehaviour
