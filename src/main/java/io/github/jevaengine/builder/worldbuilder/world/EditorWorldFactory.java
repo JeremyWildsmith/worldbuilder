@@ -166,7 +166,7 @@ public final class EditorWorldFactory extends DefaultWorldFactory
 			}
 
 			@Override
-			public ISceneBuffer.ISceneComponentEffect getComponentEffect(Graphics2D g, int offsetX, int offsetY, float scale, Matrix3X3 projection, ISceneBuffer.ISceneBufferEntry subject, Collection<ISceneBuffer.ISceneBufferEntry> beneath)
+			public ISceneBuffer.ISceneComponentEffect[] getComponentEffect(Graphics2D g, int offsetX, int offsetY, float scale, Matrix3X3 projection, ISceneBuffer.ISceneBufferEntry subject, Collection<ISceneBuffer.ISceneBufferEntry> beneath)
 			{
 				return m_weather.getComponentEffect(g, offsetX, offsetY, scale, projection, subject, beneath);
 			}
