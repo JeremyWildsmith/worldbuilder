@@ -28,6 +28,7 @@ import io.github.jevaengine.graphics.IRenderable;
 import io.github.jevaengine.graphics.ISpriteFactory;
 import io.github.jevaengine.math.Matrix3X3;
 import io.github.jevaengine.math.Rect2D;
+import io.github.jevaengine.math.Vector2D;
 import io.github.jevaengine.script.IScriptBuilderFactory;
 import io.github.jevaengine.world.DefaultWorldFactory;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.EntityImportDeclaration;
@@ -163,9 +164,9 @@ public final class EditorWorldFactory extends DefaultWorldFactory
 			}
 
 			@Override
-			public ISceneBuffer.ISceneComponentEffect[] getComponentEffect(Graphics2D g, int offsetX, int offsetY, float scale, Matrix3X3 projection, ISceneBuffer.ISceneBufferEntry subject, Collection<ISceneBuffer.ISceneBufferEntry> beneath)
+			public ISceneBuffer.ISceneComponentEffect[] getComponentEffect(Graphics2D g, int offsetX, int offsetY, float scale, Vector2D renderLocation, Matrix3X3 projection, ISceneBuffer.ISceneBufferEntry subject, Collection<ISceneBuffer.ISceneBufferEntry> beneath)
 			{
-				return m_weather.getComponentEffect(g, offsetX, offsetY, scale, projection, subject, beneath);
+				return m_weather.getComponentEffect(g, offsetX, offsetY, scale, renderLocation, projection, subject, beneath);
 			}
 		}
 	}
