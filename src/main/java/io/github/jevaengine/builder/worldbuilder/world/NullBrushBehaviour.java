@@ -19,6 +19,7 @@
 package io.github.jevaengine.builder.worldbuilder.world;
 
 import io.github.jevaengine.math.Vector3F;
+import io.github.jevaengine.world.Direction;
 import io.github.jevaengine.world.scene.model.ISceneModel;
 import io.github.jevaengine.world.scene.model.NullSceneModel;
 
@@ -32,4 +33,13 @@ public final class NullBrushBehaviour implements IBrushBehaviour
 	
 	@Override
 	public void apply(EditorWorld world, Vector3F location) { }
+
+	@Override
+	public void setDirection(Direction d) { }
+
+	@Override
+	public Direction getDirection()
+	{
+		return Direction.Zero;
+	}
 }

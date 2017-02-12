@@ -25,7 +25,6 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.swing.tree.TreeModel;
 
 /**
  *
@@ -127,6 +126,11 @@ public class SelectBrushQuery extends javax.swing.JFrame {
         });
 
         lstDirection.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        lstDirection.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lstDirectionActionPerformed(evt);
+            }
+        });
 
         btnStatic.setSelected(true);
         btnStatic.setText("Static");
@@ -170,6 +174,10 @@ public class SelectBrushQuery extends javax.swing.JFrame {
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
 		browseBrushTree.setModel(new FileTreeModel(m_baseDirectory));
     }//GEN-LAST:event_btnRefreshActionPerformed
+
+    private void lstDirectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lstDirectionActionPerformed
+		
+    }//GEN-LAST:event_lstDirectionActionPerformed
 
 	public static class FileTreeModel implements javax.swing.tree.TreeModel
 	{

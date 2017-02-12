@@ -42,7 +42,7 @@ import io.github.jevaengine.builder.worldbuilder.world.EditorWorldFactory.Editor
 import io.github.jevaengine.builder.worldbuilder.world.EditorWorldFactory.EditorWeatherFactory.EditorWeather;
 import io.github.jevaengine.builder.worldbuilder.world.EditorZone.DummyZone;
 import io.github.jevaengine.builder.worldbuilder.world.ResizeZoneBrushBehaviour.IResizeZoneBrushBehaviourHandler;
-import io.github.jevaengine.builder.worldbuilder.world.SampleSceneArtifactBrush.ISceneArtifactSampleHandler;
+import io.github.jevaengine.builder.worldbuilder.world.SampleSceneArtifactBrushBehaviour.ISceneArtifactSampleHandler;
 import io.github.jevaengine.config.ValueSerializationException;
 import io.github.jevaengine.config.json.JsonVariable;
 import io.github.jevaengine.graphics.IFontFactory;
@@ -81,8 +81,6 @@ import io.github.jevaengine.world.World;
 import io.github.jevaengine.world.entity.IEntity;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
 import io.github.jevaengine.world.scene.camera.ControlledCamera;
-import io.github.jevaengine.world.scene.effect.DebugDrawComponent;
-import io.github.jevaengine.world.scene.effect.HideEntityObstructionsEffect;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -217,8 +215,7 @@ public class EditorWorldViewFactory
 			m_world = world;
 			m_camera = new ControlledCamera(sceneBufferFactory);
 			m_camera.attach(world.getWorld());
-			m_camera.addEffect(new DebugDrawComponent());
-			m_camera.addEffect(new HideEntityObstructionsEffect(m_world.getCursor().getEntity(), 0.4F));
+			//m_camera.addEffect(new DebugDrawComponent());
 			m_modelFactory = modelFactory;
 			
 			m_selectBrushQuery = selectBrushQuery;
@@ -509,7 +506,7 @@ public class EditorWorldViewFactory
 			worldView.getObservers().add(cameraController);
 			getObservers().add(cameraController);
 
-			SelectionController selectionController = new SelectionController(m_world, m_workingBrush);
+			BrushSelectionController selectionController = new BrushSelectionController(m_world, m_workingBrush);
 			getObservers().add(selectionController);
 			logicTimer.getObservers().add(selectionController);
 			
@@ -717,7 +714,7 @@ public class EditorWorldViewFactory
 			getControl(Button.class, "btnSampleBrush").getObservers().add(new IButtonPressObserver() {
 				@Override
 				public void onPress() {
-					m_workingBrush.setBehaviour(new SampleSceneArtifactBrush(new ISceneArtifactSampleHandler() {
+					m_workingBrush.setBehaviour(new SampleSceneArtifactBrushBehaviour(new ISceneArtifactSampleHandler() {
 						@Override
 						public void sample(EditorSceneArtifact sample) {
 							m_workingBrush.setBehaviour(new PlaceSceneArtifactBrushBehaviour(sample.getModel(), sample.getModelName(), sample.getDirection(), sample.isTraversable(), sample.isStatic()));					
@@ -850,14 +847,14 @@ public class EditorWorldViewFactory
 		}
 	}
 		
-	private static final class SelectionController implements IWindowInputObserver, IWindowFocusObserver, ITimerObserver
+	private static final class BrushSelectionController implements IWindowInputObserver, IWindowFocusObserver, ITimerObserver
 	{
 		private final EditorWorld m_world;
 		private final Brush m_brush;
 				
 		private boolean m_applyBrush = false;
 		
-		public SelectionController(EditorWorld world, Brush brush)
+		public BrushSelectionController(EditorWorld world, Brush brush)
 		{
 			m_brush = brush;
 			m_world = world;
@@ -873,13 +870,16 @@ public class EditorWorldViewFactory
 		@Override
 		public void onKeyEvent(InputKeyEvent event)
 		{
-			if(event.keyCode != KeyEvent.VK_ENTER)
-				return;
-			
-			if(event.type == KeyEventType.KeyUp)
-				m_applyBrush = false;
-			else if(event.type == KeyEventType.KeyDown)
-				m_applyBrush = true;
+			if(event.keyCode == KeyEvent.VK_ENTER)
+			{
+				if(event.type == KeyEventType.KeyUp)
+					m_applyBrush = false;
+				else if(event.type == KeyEventType.KeyDown)
+					m_applyBrush = true;
+			} else if(event.keyCode == KeyEvent.VK_R && event.type == KeyEventType.KeyUp)
+			{
+				m_brush.setDirection(m_brush.getDirection().getClockwise());
+			}
 		}
 
 		@Override

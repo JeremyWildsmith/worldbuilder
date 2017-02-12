@@ -21,6 +21,7 @@ package io.github.jevaengine.builder.worldbuilder.world;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.util.IObserverRegistry;
 import io.github.jevaengine.util.Observers;
+import io.github.jevaengine.world.Direction;
 
 public final class Brush
 {
@@ -43,6 +44,16 @@ public final class Brush
 	{
 		Vector3F location = world.getCursor().getLocation();
 		m_behaviour.apply(world, location);
+	}
+	
+	public void setDirection(Direction d)
+	{
+		m_behaviour.setDirection(d);
+	}
+	
+	public Direction getDirection()
+	{
+		return m_behaviour.getDirection();
 	}
 	
 	public interface IBrushBehaviorObserver

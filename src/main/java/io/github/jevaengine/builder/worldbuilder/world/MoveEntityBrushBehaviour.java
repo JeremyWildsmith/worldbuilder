@@ -19,6 +19,7 @@
 package io.github.jevaengine.builder.worldbuilder.world;
 
 import io.github.jevaengine.math.Vector3F;
+import io.github.jevaengine.world.Direction;
 import io.github.jevaengine.world.entity.IEntity;
 import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
 
@@ -48,6 +49,15 @@ public class MoveEntityBrushBehaviour implements IBrushBehaviour
 	{
 		m_entity.getBody().setLocation(location);
 		m_movementHandler.moved();
+	}
+
+	@Override
+	public void setDirection(Direction d) { }
+
+	@Override
+	public Direction getDirection()
+	{
+		return m_entity.getBody().getDirection();
 	}
 	
 	public interface IEntityMovementBrushBehaviorHandler

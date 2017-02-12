@@ -26,19 +26,19 @@ import java.net.URI;
 
 public final class PlaceSceneArtifactBrushBehaviour implements IBrushBehaviour
 {
-	private final IImmutableSceneModel m_model;
+	private final ISceneModel m_model;
 	private final URI m_modelName;
-	private final Direction m_direction;
 	private final boolean m_isTraversable;
 	private final boolean m_isStatic;
 	
 	public PlaceSceneArtifactBrushBehaviour(IImmutableSceneModel model, URI modelName, Direction direction, boolean isTraversable, boolean isStatic)
 	{
-		m_model = model;
+		m_model = model.clone();
 		m_modelName = modelName;
-		m_direction = direction;
 		m_isTraversable = isTraversable;
 		m_isStatic = isStatic;
+		
+		m_model.setDirection(direction);
 	}
 	
 	@Override
@@ -51,7 +51,18 @@ public final class PlaceSceneArtifactBrushBehaviour implements IBrushBehaviour
 	public void apply(EditorWorld world, Vector3F location)
 	{
 		ISceneModel model = m_model.clone();
-		model.setDirection(m_direction);
-		world.setTile(new EditorSceneArtifact(model, m_modelName, m_direction, m_isTraversable, m_isStatic), location);
+		world.setTile(new EditorSceneArtifact(model, m_modelName, model.getDirection(), m_isTraversable, m_isStatic), location);
+	}
+
+	@Override
+	public void setDirection(Direction d)
+	{
+		m_model.setDirection(d);
+	}
+
+	@Override
+	public Direction getDirection()
+	{
+		return m_model.getDirection();
 	}
 }

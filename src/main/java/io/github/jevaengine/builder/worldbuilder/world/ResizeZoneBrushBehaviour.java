@@ -132,6 +132,15 @@ public final class ResizeZoneBrushBehaviour implements IBrushBehaviour
 		m_zone.setBounds(bounds);
 		m_handler.resized();
 	}
+
+	@Override
+	public void setDirection(Direction d) { }
+
+	@Override
+	public Direction getDirection()
+	{
+		return Direction.Zero;
+	}
 	
 	public interface IResizeZoneBrushBehaviourHandler
 	{
