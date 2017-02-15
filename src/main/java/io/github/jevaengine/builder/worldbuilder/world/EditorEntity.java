@@ -172,7 +172,7 @@ public final class EditorEntity
 		m_dummy.getBody().setDirection(direction);
 	}
 
-	protected DummyEntity getEntity()
+	public DummyEntity getEntity()
 	{
 		return m_dummy;
 	}

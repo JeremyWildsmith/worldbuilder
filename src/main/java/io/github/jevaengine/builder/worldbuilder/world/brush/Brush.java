@@ -16,8 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package io.github.jevaengine.builder.worldbuilder.world;
+package io.github.jevaengine.builder.worldbuilder.world.brush;
 
+import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.util.IObserverRegistry;
 import io.github.jevaengine.util.Observers;

@@ -16,52 +16,55 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package io.github.jevaengine.builder.worldbuilder.world;
+package io.github.jevaengine.builder.worldbuilder.world.brush;
 
+import io.github.jevaengine.builder.worldbuilder.world.EditorSceneArtifact;
+import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.world.Direction;
-import io.github.jevaengine.world.entity.IEntity;
 import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
+import io.github.jevaengine.world.scene.model.ISceneModel;
+import java.net.URI;
 
-/**
- *
- * @author Jeremy
- */
-public class MoveEntityBrushBehaviour implements IBrushBehaviour
+public final class PlaceSceneArtifactBrushBehaviour implements IBrushBehaviour
 {
-	private final IEntity m_entity;
-	private final IEntityMovementBrushBehaviorHandler m_movementHandler;
+	private final ISceneModel m_model;
+	private final URI m_modelName;
+	private final boolean m_isTraversable;
+	private final boolean m_isStatic;
 	
-	public MoveEntityBrushBehaviour(IEntity entity, IEntityMovementBrushBehaviorHandler movementHandler)
+	public PlaceSceneArtifactBrushBehaviour(IImmutableSceneModel model, URI modelName, Direction direction, boolean isTraversable, boolean isStatic)
 	{
-		m_entity = entity;
-		m_movementHandler = movementHandler;
+		m_model = model.clone();
+		m_modelName = modelName;
+		m_isTraversable = isTraversable;
+		m_isStatic = isStatic;
+		
+		m_model.setDirection(direction);
 	}
-
+	
 	@Override
 	public IImmutableSceneModel getModel()
 	{
-		return m_entity.getModel();
+		return m_model;
 	}
-
+	
 	@Override
 	public void apply(EditorWorld world, Vector3F location)
 	{
-		m_entity.getBody().setLocation(location);
-		m_movementHandler.moved();
+		ISceneModel model = m_model.clone();
+		world.setTile(new EditorSceneArtifact(model, m_modelName, model.getDirection(), m_isTraversable, m_isStatic), location);
 	}
 
 	@Override
-	public void setDirection(Direction d) { }
+	public void setDirection(Direction d)
+	{
+		m_model.setDirection(d);
+	}
 
 	@Override
 	public Direction getDirection()
 	{
-		return m_entity.getBody().getDirection();
-	}
-	
-	public interface IEntityMovementBrushBehaviorHandler
-	{
-		void moved();
+		return m_model.getDirection();
 	}
 }

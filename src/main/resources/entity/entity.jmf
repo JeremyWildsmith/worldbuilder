@@ -9,14 +9,14 @@
           "components": [
             {
               "sprite": "entity.jsf",
-              "animation": "entity",
+              "animation": "idle",
               "bounds": {
                 "x": -0.5,
                 "y": -0.5,
                 "z": 0.0,
                 "width": 1.0,
                 "height": 1.0,
-                "depth": 10.0
+                "depth": 0.01
               }
             }
           ]

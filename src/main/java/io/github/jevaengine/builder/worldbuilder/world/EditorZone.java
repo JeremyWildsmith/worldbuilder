@@ -114,7 +114,7 @@ public final class EditorZone
 		m_dummy.getBody().setLocation(location);
 	}
 
-	protected DummyZone getEntity()
+	public DummyZone getEntity()
 	{
 		return m_dummy;
 	}

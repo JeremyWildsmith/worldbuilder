@@ -18,7 +18,7 @@
  */
 package io.github.jevaengine.builder.worldbuilder;
 
-import io.github.jevaengine.builder.worldbuilder.world.FloatingToolbarFactory;
+import io.github.jevaengine.builder.worldbuilder.ui.FloatingToolbarFactory;
 import io.github.jevaengine.config.IConfigurationFactory;
 import io.github.jevaengine.game.DefaultGame;
 import io.github.jevaengine.graphics.IFontFactory;

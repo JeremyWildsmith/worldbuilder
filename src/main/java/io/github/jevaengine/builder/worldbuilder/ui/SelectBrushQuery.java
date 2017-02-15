@@ -6,8 +6,8 @@
 package io.github.jevaengine.builder.worldbuilder.ui;
 
 import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQuery.FileTreeModel.SelectBrushChild;
-import io.github.jevaengine.builder.worldbuilder.world.Brush;
-import io.github.jevaengine.builder.worldbuilder.world.PlaceSceneArtifactBrushBehaviour;
+import io.github.jevaengine.builder.worldbuilder.world.brush.Brush;
+import io.github.jevaengine.builder.worldbuilder.world.brush.PlaceSceneArtifactBrushBehaviour;
 import io.github.jevaengine.util.Nullable;
 import io.github.jevaengine.world.Direction;
 import io.github.jevaengine.world.scene.model.ISceneModel;

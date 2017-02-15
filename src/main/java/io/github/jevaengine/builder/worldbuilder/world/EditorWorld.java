@@ -20,7 +20,7 @@ package io.github.jevaengine.builder.worldbuilder.world;
 
 import io.github.jevaengine.builder.worldbuilder.world.EditorEntity.DummyEntity;
 import io.github.jevaengine.builder.worldbuilder.world.EditorSceneArtifact.DummySceneArtifact;
-import io.github.jevaengine.builder.worldbuilder.world.EditorWorldFactory.EditorWeatherFactory.EditorWeather;
+import io.github.jevaengine.builder.worldbuilder.world.EditorWeatherFactory.EditorWeather;
 import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.math.Rect2D;
 import io.github.jevaengine.math.Rect3F;
@@ -40,6 +40,7 @@ import io.github.jevaengine.world.entity.WorldAssociationException;
 import io.github.jevaengine.world.physics.IPhysicsBody;
 import io.github.jevaengine.world.physics.NonparticipantPhysicsBody;
 import io.github.jevaengine.world.physics.NullPhysicsBody;
+import io.github.jevaengine.world.scene.camera.ICamera;
 import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
 import io.github.jevaengine.world.scene.model.NullSceneModel;
 import java.util.ArrayList;
@@ -64,7 +65,7 @@ public final class EditorWorld
 	
 	private String m_script = "";
 	
-	protected EditorWorld(World world, IFontFactory fontFactory)
+	public EditorWorld(World world, IFontFactory fontFactory)
 	{
 		m_maxFrictionForce = world.getPhysicsWorld().getMaxFrictionForce();
 		m_metersPerUnit = world.getMetersPerUnit();
@@ -103,11 +104,14 @@ public final class EditorWorld
 												location.z));
 	}
 	
-	World getWorld()
-	{
-		return m_world;
+	public void update(int deltaTime) {
+		m_world.update(deltaTime);
 	}
 	
+	public void attachCamera(ICamera camera) {
+		camera.attach(m_world);
+	}
+
 	public WorldCursor getCursor()
 	{
 		return m_worldCursor;

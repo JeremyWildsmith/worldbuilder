@@ -16,16 +16,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package io.github.jevaengine.builder.worldbuilder.world;
+package io.github.jevaengine.builder.worldbuilder.world.brush;
 
+import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.world.Direction;
-import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
+import io.github.jevaengine.world.scene.model.ISceneModel;
+import io.github.jevaengine.world.scene.model.NullSceneModel;
 
-public interface IBrushBehaviour
+public final class NullBrushBehaviour implements IBrushBehaviour
 {
-	IImmutableSceneModel getModel();
-	void apply(EditorWorld world, Vector3F location);
-	void setDirection(Direction d);
-	Direction getDirection();
+	@Override
+	public ISceneModel getModel()
+	{
+		return new NullSceneModel();
+	}
+	
+	@Override
+	public void apply(EditorWorld world, Vector3F location) { }
+
+	@Override
+	public void setDirection(Direction d) { }
+
+	@Override
+	public Direction getDirection()
+	{
+		return Direction.Zero;
+	}
 }

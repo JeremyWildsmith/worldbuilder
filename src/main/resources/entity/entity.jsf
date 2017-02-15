@@ -3,18 +3,18 @@
   "animations" : [ {
     "frames" : [ {
       "region" : {
-        "height" : 260,
-        "width" : 42,
+        "height" : 32,
+        "width" : 32,
         "y" : 0,
         "x" : 0
       },
-      "delay" : 1000,
+      "delay" : 2000,
       "anchor" : {
-        "y" : 260,
-        "x" : 21
+        "y" : 16,
+        "x" : 16
       }
     } ],
-    "name" : "entity"
-  } ],
+    "name" : "idle"
+  }],
   "texture" : "entity.png"
 }

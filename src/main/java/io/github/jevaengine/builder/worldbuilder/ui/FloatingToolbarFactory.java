@@ -16,8 +16,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package io.github.jevaengine.builder.worldbuilder.world;
+package io.github.jevaengine.builder.worldbuilder.ui;
 
+import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.EditorWorldViewFactory;
 import io.github.jevaengine.FutureResult;
 import io.github.jevaengine.IDisposable;
 import io.github.jevaengine.IInitializationMonitor;
@@ -32,8 +33,9 @@ import io.github.jevaengine.builder.worldbuilder.ui.CreateWorldQueryFactory.ICre
 import io.github.jevaengine.builder.worldbuilder.ui.OpenWorldQueryFactory;
 import io.github.jevaengine.builder.worldbuilder.ui.OpenWorldQueryFactory.IOpenWorldQueryObserver;
 import io.github.jevaengine.builder.worldbuilder.ui.OpenWorldQueryFactory.OpenWorldQuery;
-import io.github.jevaengine.builder.worldbuilder.world.EditorWorldViewFactory.EditorWorldView;
-import io.github.jevaengine.builder.worldbuilder.world.EditorWorldViewFactory.IEditorWorldViewObserver;
+import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
+import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.EditorWorldView;
+import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.EditorWorldViewFactory.IEditorWorldViewObserver;
 import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.math.Vector2D;
 import io.github.jevaengine.script.NullScriptBuilder;
@@ -165,7 +167,6 @@ public final class FloatingToolbarFactory
 				});
 			} catch (WindowConstructionException e)
 			{
-				world.dispose();
 				m_logger.error("Unable to construct world editor view window", e);
 			}
 		}

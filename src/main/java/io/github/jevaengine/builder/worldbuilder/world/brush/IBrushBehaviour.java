@@ -16,35 +16,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301  USA
  */
-package io.github.jevaengine.builder.worldbuilder.world;
+package io.github.jevaengine.builder.worldbuilder.world.brush;
 
+import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.world.Direction;
-import io.github.jevaengine.world.scene.model.ISceneModel;
-import io.github.jevaengine.world.scene.model.NullSceneModel;
+import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
 
-public final class ClearTileBrushBehaviour implements IBrushBehaviour
+public interface IBrushBehaviour
 {
-
-	@Override
-	public ISceneModel getModel()
-	{
-		return new NullSceneModel();
-	}
-	
-	@Override
-	public void apply(EditorWorld world, Vector3F location)
-	{
-		world.clearTile(location);
-	}
-
-	@Override
-	public void setDirection(Direction d) { }
-
-	@Override
-	public Direction getDirection()
-	{
-		return Direction.Zero;
-	}
-
+	IImmutableSceneModel getModel();
+	void apply(EditorWorld world, Vector3F location);
+	void setDirection(Direction d);
+	Direction getDirection();
 }
