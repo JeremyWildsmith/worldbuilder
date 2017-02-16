@@ -5,12 +5,16 @@
  */
 package io.github.jevaengine.builder.worldbuilder.ui.worldeditor.behavior;
 
-import io.github.jevaengine.builder.ui.TextInputQueryFactory;
 import io.github.jevaengine.builder.ui.TextInputQueryFactory.ITextInputQueryObserver;
 import io.github.jevaengine.builder.worldbuilder.world.EditorSceneArtifact;
 import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
+import io.github.jevaengine.graphics.IRenderable;
+import io.github.jevaengine.graphics.NullGraphic;
 import io.github.jevaengine.joystick.InputKeyEvent;
 import io.github.jevaengine.joystick.InputMouseEvent;
+import io.github.jevaengine.math.Matrix3X3;
+import io.github.jevaengine.math.Rect2D;
+import io.github.jevaengine.math.Vector2D;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.ui.Button;
 import io.github.jevaengine.ui.IWindowFactory;
@@ -21,8 +25,14 @@ import io.github.jevaengine.ui.Window;
 import io.github.jevaengine.ui.WindowManager;
 import io.github.jevaengine.ui.WorldView;
 import io.github.jevaengine.world.entity.IEntity;
+import io.github.jevaengine.world.scene.ISceneBuffer;
+import io.github.jevaengine.world.scene.ISceneBuffer.ISceneComponentEffect;
 import io.github.jevaengine.world.scene.camera.ControlledCamera;
+import java.awt.AlphaComposite;
+import java.awt.Composite;
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
+import java.util.Collection;
 
 /**
  *
@@ -51,6 +61,8 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
 		
 		addControl(logicTimer);
 		worldView.setCamera(m_camera);
+		
+		m_camera.addEffect(new HideOverCursorEffect());
 
 		logicTimer.getObservers().add(cameraController);
 		worldView.getObservers().add(cameraController);
@@ -142,6 +154,45 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
 		@Override
 		public void cancel() {
 		}
+	}
+	
+	private class HideOverCursorEffect implements ISceneBuffer.ISceneBufferEffect {
+
+		@Override
+		public IRenderable getUnderlay(Rect2D bounds, Matrix3X3 projection) {
+			return new NullGraphic();
+		}
+		
+
+		@Override
+		public IRenderable getOverlay(Rect2D bounds, Matrix3X3 projection) {
+			return new NullGraphic();
+		}
+
+		@Override
+		public ISceneBuffer.ISceneComponentEffect[] getComponentEffect(final Graphics2D g, int offsetX, int offsetY, float scale, Vector2D renderLocation, Matrix3X3 projection, ISceneBuffer.ISceneBufferEntry subject, Collection<ISceneBuffer.ISceneBufferEntry> beneath) {
+			IEntity dispatcher = subject.getDispatcher();
+			
+			if(dispatcher == null || dispatcher.getBody().getLocation().z < m_world.getCursor().getLocation().z + 0.0001)
+				return new ISceneComponentEffect[0];
+			
+			return new ISceneComponentEffect[] {
+				new ISceneComponentEffect() {
+				private Composite m_oldComposite;
+				@Override
+				public void prerender() {
+					m_oldComposite = g.getComposite();
+					g.setComposite(AlphaComposite.SrcOver.derive(0.1f));
+				}
+
+				@Override
+				public void postrender() {
+					g.setComposite(m_oldComposite);
+				}
+			}
+			};
+		}
+		
 	}
 
 	private class CameraController implements Window.IWindowFocusObserver, Timer.ITimerObserver, WorldView.IWorldViewInputObserver {
