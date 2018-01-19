@@ -53,6 +53,17 @@
     },
     {
       "type": "button",
+      "name": "btnToggleWireframe",
+      "location": {
+        "x": 320,
+        "y": 45
+      },
+      "config": {
+        "text": "Toggle Wireframe"
+      }
+    },
+    {
+      "type": "button",
       "name": "btnAdjustSnapGridSize",
       "location": {
         "x": 480,
