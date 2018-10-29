@@ -57,31 +57,34 @@ public class EntityBehaviorInjector extends BasicBehaviorInjector {
 		m_camera = camera;
 	}
 
-	private void moveEntity(final IEntity entity) {
-		m_camera.lookAt(entity.getBody().getLocation());
-		m_brush.setBehaviour(new MoveEntityBrushBehaviour(entity, new MoveEntityBrushBehaviour.IEntityMovementBrushBehaviorHandler() {
-			@Override
-			public void moved() {
-				m_brush.setBehaviour(new NullBrushBehaviour());
-			}
-		}));
+    private void moveEntity(final IEntity entity) {
+	    moveEntity(entity, null);
+    }
+
+    private void moveEntity(final IEntity entity, @Nullable MoveEntityBrushBehaviour.IEntityMovementBrushBehaviorHandler movementHandler) {
+	    MoveEntityBrushBehaviour.IEntityMovementBrushBehaviorHandler handler = () -> {
+			m_brush.setBehaviour(new NullBrushBehaviour());
+		};
+
+		m_brush.setBehaviour(new MoveEntityBrushBehaviour(entity, movementHandler == null ? handler : movementHandler));
 	}
 
-	private void copyEntity(final EditorEntity.DummyEntity sourceEntity) {
-		EditorEntity clone = createUnnamedEntity();
+	private void copyEntity(final EditorEntity.DummyEntity sourceEntity, boolean chained) {
+		final EditorEntity clone = createUnnamedEntity();
 		EditorEntity source = sourceEntity.getEditorEntity();
 		
 		clone.setAuxiliaryConfig(source.getAuxiliaryConfig());
 		clone.setDirection(source.getDirection());
 		clone.setClassName(source.getClassName());
 		clone.setConfig(source.getConfig());
-		clone.setLocation(source.getLocation().add(new Vector3F(1, 1, 0)));
-		
+		clone.setLocation(source.getLocation());
+
 		m_world.addEntity(clone);
-		
-		m_camera.lookAt(clone.getLocation());
-		
-		moveEntity(clone.getEntity());
+
+		if(chained)
+		    moveEntity(clone.getEntity(), () -> copyEntity(clone.getEntity(), true));
+		else
+		    moveEntity(clone.getEntity());
 	}
 
 	private EditorEntity createUnnamedEntity() {
@@ -126,16 +129,19 @@ public class EntityBehaviorInjector extends BasicBehaviorInjector {
 	}
 
 	private void displayContextMenu(MenuStrip menuStrip, final EditorEntity.DummyEntity entity) {
-		menuStrip.setContext(new String[]{"Move Entity", "Configure Entity", "Copy Entity"}, new MenuStrip.IMenuStripListener() {
+		menuStrip.setContext(new String[]{"Move Entity", "Configure Entity", "Copy Entity", "Multiple Copy Entity"}, new MenuStrip.IMenuStripListener() {
 			@Override
 			public void onCommand(String command) {
 				switch (command) {
 					case "Move Entity":
 						moveEntity(entity);
 						break;
-					case "Copy Entity":
-						copyEntity(entity);
-						break;
+                    case "Copy Entity":
+                        copyEntity(entity, false);
+                        break;
+                    case "Multiple Copy Entity":
+                        copyEntity(entity, true);
+                        break;
 					case "Configure Entity":
 						configureEntity(entity.getEditorEntity());
 						break;

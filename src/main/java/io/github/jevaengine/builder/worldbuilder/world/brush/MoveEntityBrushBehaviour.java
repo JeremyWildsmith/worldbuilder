@@ -18,6 +18,7 @@
  */
 package io.github.jevaengine.builder.worldbuilder.world.brush;
 
+import io.github.jevaengine.builder.worldbuilder.world.EditorEntity;
 import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.world.Direction;
@@ -30,6 +31,7 @@ import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
  */
 public class MoveEntityBrushBehaviour implements IBrushBehaviour
 {
+	private final float MIN_ENTITY_DISTANCE = 0.0001F;
 	private final IEntity m_entity;
 	private final IEntityMovementBrushBehaviorHandler m_movementHandler;
 	
@@ -48,6 +50,11 @@ public class MoveEntityBrushBehaviour implements IBrushBehaviour
 	@Override
 	public void apply(EditorWorld world, Vector3F location)
 	{
+		for(EditorEntity e : world.getEntities()) {
+			Vector3F delta = e.getLocation().difference(location);
+			if(delta.getLength() < MIN_ENTITY_DISTANCE)
+				return;
+		}
 		m_entity.getBody().setLocation(location);
 		m_movementHandler.moved();
 	}
