@@ -105,6 +105,7 @@ public class Main implements WindowListener, Runnable
 	
 	public static void main(String[] args)
 	{
+		System.setProperty("sun.java2d.opengl", "true");
 		File assetDirectory = args.length >= 1 ? new File(args[0]) : null;
 		boolean enableCache = args.length >= 2 ? !args[1].equals("false") : true;
 		Main main = new Main(assetDirectory, enableCache);
