@@ -37,13 +37,10 @@ import io.github.jevaengine.world.entity.NullEntityTaskModel;
 import io.github.jevaengine.world.entity.WorldAssociationException;
 import io.github.jevaengine.world.physics.IPhysicsBody;
 import io.github.jevaengine.world.physics.NonparticipantPhysicsBody;
-import io.github.jevaengine.world.scene.model.DecoratedSceneModel;
-import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
+import io.github.jevaengine.world.scene.model.*;
 import io.github.jevaengine.world.scene.model.IImmutableSceneModel.ISceneModelComponent;
-import io.github.jevaengine.world.scene.model.ISceneModel;
-import io.github.jevaengine.world.scene.model.ISceneModelFactory;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory.SceneModelConstructionException;
-import io.github.jevaengine.world.scene.model.NullSceneModel;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.net.URI;
@@ -72,11 +69,14 @@ public final class EditorEntity
 	private JsonVariable m_auxConfig = new JsonVariable();
 	
 	private IFont m_font;
+
+	private ISceneModelFactory m_modelFactory;
 	
 	public EditorEntity(IFontFactory fontFactory, ISceneModelFactory modelFactory, String name, String className, @Nullable URI config)
 	{
 		m_font = new NullFont();
 		m_sceneModel = new NullSceneModel();
+		m_modelFactory = modelFactory;
 		
 		try
 		{
@@ -93,6 +93,13 @@ public final class EditorEntity
 		{
 			m_logger.error("Unable to construct entity sprite. Using NullSceneGraphic border", e);
 		}
+
+		try {
+			if(config != null)
+				m_sceneModel = new MergeSceneModel(m_sceneModel, modelFactory.create(config.resolve("model.jmf")));
+		} catch (SceneModelConstructionException e) {
+
+		}
 		
 		m_name = name;
 		m_className = className;
@@ -105,7 +112,24 @@ public final class EditorEntity
 	{
 		this(fontFactory, modelFactory, name, className, null);
 	}
-	
+
+	private void rebuildModel() {
+		try
+		{
+			m_sceneModel = m_modelFactory.create(ENTITY_MODEL);
+		} catch (SceneModelConstructionException e)
+		{
+			m_logger.error("Unable to construct entity sprite. Using NullSceneGraphic border", e);
+		}
+
+		try {
+			if(m_config != null)
+				m_sceneModel = new MergeSceneModel(m_sceneModel, m_modelFactory.create(m_config.resolve("model.jmf")));
+		} catch (SceneModelConstructionException e) {
+
+		}
+	}
+
 	public void setAuxiliaryConfig(JsonVariable config)
 	{
 		m_auxConfig = config;
@@ -145,6 +169,7 @@ public final class EditorEntity
 	public void setConfig(@Nullable URI config)
 	{
 		m_config = config;
+		rebuildModel();
 	}
 	
 	public void clearConfig()
@@ -226,7 +251,8 @@ public final class EditorEntity
 						
 						@Override
 						public void render(Graphics2D g, int x, int y, float scale) {
-							m_font.drawText(g, x, y, scale, getInstanceName());
+							if(!getInstanceName().startsWith("Unnamed"))
+								m_font.drawText(g, x, y, scale, getInstanceName());
 						}
 						
 						@Override
