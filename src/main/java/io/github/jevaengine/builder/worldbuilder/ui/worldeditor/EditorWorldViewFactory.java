@@ -18,6 +18,8 @@
  */
 package io.github.jevaengine.builder.worldbuilder.ui.worldeditor;
 
+import io.github.jevaengine.builder.worldbuilder.Main;
+import io.github.jevaengine.builder.worldbuilder.ui.SelectLayerQuery;
 import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.behavior.CommandBehaviourInjector;
 import io.github.jevaengine.builder.worldbuilder.world.brush.Brush;
 import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQuery;
@@ -34,12 +36,14 @@ import io.github.jevaengine.ui.NoSuchControlException;
 import io.github.jevaengine.ui.Window;
 import io.github.jevaengine.ui.WindowManager;
 import io.github.jevaengine.util.Observers;
+import io.github.jevaengine.world.DefaultWorldFactory;
 import io.github.jevaengine.world.IWeatherFactory;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
 import io.github.jevaengine.world.scene.camera.ControlledCamera;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
 import java.io.File;
 import java.net.URI;
+import java.util.Map;
 
 public class EditorWorldViewFactory
 {
@@ -71,7 +75,7 @@ public class EditorWorldViewFactory
 		m_baseDirectory = baseDirectory;
 	}
 	
-	public EditorWorldView create(EditorWorld world) throws WindowConstructionException
+	public EditorWorldView create(Map<String, Float> layers, EditorWorld world) throws WindowConstructionException
 	{
 		Observers observers = new Observers();
 		
@@ -79,10 +83,11 @@ public class EditorWorldViewFactory
 		ControlledCamera camera = new ControlledCamera(m_sceneBufferFactory);
 		
 		SelectBrushQuery selectBrushQuery = new SelectBrushQuery(new File(m_baseDirectory), brush, m_modelFactory);
-		
+		SelectLayerQuery selectLayerQuery = new SelectLayerQuery(layers, world);
+
 		CommandBehaviourInjector commandInjector = new CommandBehaviourInjector(m_windowManager, m_windowFactory, m_weatherFactory, 
 					m_baseDirectory, m_fontFactory, observers, world, m_sceneBufferFactory, 
-					m_modelFactory, brush, selectBrushQuery);
+					m_modelFactory, brush, selectBrushQuery, selectLayerQuery);
 		
 		BrushBehaviorInjector brushInjector = new BrushBehaviorInjector(m_windowManager, m_windowFactory, world, brush);
 
@@ -93,7 +98,9 @@ public class EditorWorldViewFactory
 		ZoneBehaviorInjector zoneInjector = new ZoneBehaviorInjector(m_windowManager, m_windowFactory, world, camera, brush, m_baseDirectory, m_fontFactory);
 		
 		Window window = m_windowFactory.create(WINDOW_LAYOUT);
-		
+
+		window.setMovable(false);
+
 		try
 		{
 			commandInjector.inject(window);
@@ -107,8 +114,9 @@ public class EditorWorldViewFactory
 		}
 		
 		m_windowManager.addWindow(window);
+		window.center();
 
-		return new EditorWorldView(window, observers, world, selectBrushQuery);
+		return new EditorWorldView(window, observers, world, selectBrushQuery, selectLayerQuery);
 	}
 	
 	

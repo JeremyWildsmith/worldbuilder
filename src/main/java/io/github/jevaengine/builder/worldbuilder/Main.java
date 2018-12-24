@@ -54,6 +54,7 @@ import io.github.jevaengine.math.Matrix3X3;
 import io.github.jevaengine.script.IScriptBuilder;
 import io.github.jevaengine.script.NullScriptBuilder;
 import io.github.jevaengine.util.Nullable;
+import io.github.jevaengine.world.DefaultWorldFactory;
 import io.github.jevaengine.world.IEffectMapFactory;
 import io.github.jevaengine.world.IWorldFactory;
 import io.github.jevaengine.world.TiledEffectMapFactory;
@@ -80,6 +81,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 import javax.inject.Inject;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -91,8 +94,8 @@ public class Main implements WindowListener, Runnable
 {
 	
 	private static final String CONFIG_NAME = "game.jbc";
-	private static final int WINX = 1220;
-	private static final int WINY = 650;
+	private static final int WINX = 1830;
+	private static final int WINY = 975;
 
 	private JFrame m_frame;
 	private GameDriver m_gameDriver;
@@ -100,7 +103,8 @@ public class Main implements WindowListener, Runnable
 	private final Logger m_logger = LoggerFactory.getLogger(Main.class);
 	private final File m_assetSource;
 	private ISceneBufferFactory m_sceneBufferFactory = new NullSceneBufferFactory();
-	
+	private WorldBuilderConfiguration m_config;
+
 	private final boolean m_enableCache;
 	
 	public static void main(String[] args)
@@ -128,8 +132,8 @@ public class Main implements WindowListener, Runnable
 		
 		try(InputStream configSource = new FileInputStream(new File(m_assetSource.toURI().resolve("./" + CONFIG_NAME))))
 		{
-			WorldBuilderConfiguration config = JsonVariable.create(configSource).getValue(WorldBuilderConfiguration.class);
-			m_sceneBufferFactory = new TopologicalOrthographicProjectionSceneBufferFactory(config.projection);
+			m_config = JsonVariable.create(configSource).getValue(WorldBuilderConfiguration.class);
+			m_sceneBufferFactory = new TopologicalOrthographicProjectionSceneBufferFactory(m_config.projection);
 		} catch (FileNotFoundException e)
 		{
 			m_logger.error("The specified project directory does not contain the builder configuration document: " + CONFIG_NAME + ". You will not be able to perform some critical tasks in the world builder.", e);
@@ -193,6 +197,7 @@ public class Main implements WindowListener, Runnable
 		protected void configure()
 		{
 			bind(URI.class).annotatedWith(Names.named("BASE_DIRECTORY")).toInstance(m_assetSource);
+			bind(WorldBuilderConfiguration.class).toInstance(m_config);
 			bind(IInputSource.class).toInstance(FrameInputSource.create(m_frame));
 			bind(IScriptBuilder.class).toInstance(new NullScriptBuilder());
 			bind(IGameFactory.class).to(WorldBuilderFactory.class);
@@ -303,27 +308,4 @@ public class Main implements WindowListener, Runnable
 
 	@Override
 	public void windowOpened(WindowEvent arg0) { }
-	
-	private static final class WorldBuilderConfiguration implements ISerializable
-	{
-		private Matrix3X3 projection;
-
-		@Override
-		public void serialize(IVariable target) throws ValueSerializationException
-		{
-			target.addChild("projection").setValue(projection);
-		}
-
-		@Override
-		public void deserialize(IImmutableVariable source) throws ValueSerializationException
-		{
-			try
-			{
-				projection = source.getChild("projection").getValue(Matrix3X3.class);
-			} catch (NoSuchChildVariableException e)
-			{
-				throw new ValueSerializationException(e);
-			}
-		}
-	}
 }

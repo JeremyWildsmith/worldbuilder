@@ -18,6 +18,7 @@
  */
 package io.github.jevaengine.builder.worldbuilder.ui;
 
+import io.github.jevaengine.builder.worldbuilder.WorldBuilderConfiguration;
 import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.EditorWorldViewFactory;
 import io.github.jevaengine.FutureResult;
 import io.github.jevaengine.IDisposable;
@@ -58,6 +59,8 @@ import io.github.jevaengine.world.physics.NullPhysicsWorldFactory;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
 import java.net.URI;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,8 +82,10 @@ public final class FloatingToolbarFactory
 	private final IEffectMapFactory m_effectMapFactory;
 	
 	private final URI m_baseDirectory;
+
+	private final Map<String, Float> m_layers;
 	
-	public FloatingToolbarFactory(WindowManager windowManager, IWindowFactory windowFactory, ISceneBufferFactory sceneBufferFactory, ISceneModelFactory modelFactory, IParallelWorldFactory worldFactory, IFontFactory fontFactory, IWeatherFactory weatherFactory, IEffectMapFactory effectMapFactory, URI baseDirectory)
+	public FloatingToolbarFactory(WindowManager windowManager, IWindowFactory windowFactory, ISceneBufferFactory sceneBufferFactory, ISceneModelFactory modelFactory, IParallelWorldFactory worldFactory, IFontFactory fontFactory, IWeatherFactory weatherFactory, IEffectMapFactory effectMapFactory, URI baseDirectory, WorldBuilderConfiguration config)
 	{
 		m_windowManager = windowManager;
 		m_windowFactory = windowFactory;
@@ -91,6 +96,7 @@ public final class FloatingToolbarFactory
 		m_weatherFactory = weatherFactory;
 		m_effectMapFactory = effectMapFactory;
 		m_baseDirectory = baseDirectory;
+		m_layers = config.layers;
 	}
 	
 	public FloatingToolbar create() throws WindowConstructionException
@@ -157,7 +163,7 @@ public final class FloatingToolbarFactory
 		{
 			try
 			{
-				final EditorWorldView worldView = new EditorWorldViewFactory(m_windowManager, m_windowFactory, m_sceneBufferFactory, m_modelFactory, m_fontFactory, m_weatherFactory, m_baseDirectory).create(new EditorWorld(world, m_fontFactory));
+				final EditorWorldView worldView = new EditorWorldViewFactory(m_windowManager, m_windowFactory, m_sceneBufferFactory, m_modelFactory, m_fontFactory, m_weatherFactory, m_baseDirectory).create(m_layers, new EditorWorld(world, m_fontFactory));
 			
 				worldView.getObservers().add(new IEditorWorldViewObserver() {
 					@Override

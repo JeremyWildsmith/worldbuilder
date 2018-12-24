@@ -7,6 +7,7 @@ package io.github.jevaengine.builder.worldbuilder.ui.worldeditor;
 
 import io.github.jevaengine.IDisposable;
 import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQuery;
+import io.github.jevaengine.builder.worldbuilder.ui.SelectLayerQuery;
 import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
 import io.github.jevaengine.math.Vector2D;
 import io.github.jevaengine.ui.Window;
@@ -27,12 +28,14 @@ public final class EditorWorldView implements IDisposable {
 	private final IObserverRegistry m_observers;
 	private final EditorWorld m_world;
 	private final SelectBrushQuery m_selectBrushQuery;
+	private final SelectLayerQuery m_selectLayerQuery;
 
-	public EditorWorldView(Window window, IObserverRegistry observers, EditorWorld world, SelectBrushQuery selectBrushQuery) {
+	public EditorWorldView(Window window, IObserverRegistry observers, EditorWorld world, SelectBrushQuery selectBrushQuery, SelectLayerQuery selectLayerQuery) {
 		m_observers = observers;
 		m_window = window;
 		m_world = world;
 		m_selectBrushQuery = selectBrushQuery;
+		m_selectLayerQuery = selectLayerQuery;
 	}
 
 	@Override
@@ -43,6 +46,7 @@ public final class EditorWorldView implements IDisposable {
 				@Override
 				public void run() {
 					m_selectBrushQuery.dispose();
+					m_selectLayerQuery.dispose();
 				}
 			});
 		} catch (InterruptedException | InvocationTargetException ex) {

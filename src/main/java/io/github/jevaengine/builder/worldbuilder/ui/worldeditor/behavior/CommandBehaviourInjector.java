@@ -7,6 +7,7 @@ package io.github.jevaengine.builder.worldbuilder.ui.worldeditor.behavior;
 
 import io.github.jevaengine.builder.ui.FileInputQueryFactory;
 import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQuery;
+import io.github.jevaengine.builder.worldbuilder.ui.SelectLayerQuery;
 import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.EditorWorldViewFactory;
 import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.behavior.BasicBehaviorInjector;
 import io.github.jevaengine.builder.worldbuilder.world.EditorEntity;
@@ -56,6 +57,7 @@ public class CommandBehaviourInjector extends BasicBehaviorInjector {
 
 	private final Brush m_workingBrush;
 	private final SelectBrushQuery m_selectBrushQuery;
+	private final SelectLayerQuery m_selectLayerQuery;
 	private final EditorWorld m_world;
 	private final ControlledCamera m_camera;
 	private final ISceneModelFactory m_modelFactory;
@@ -65,9 +67,10 @@ public class CommandBehaviourInjector extends BasicBehaviorInjector {
 	private final URI m_baseDirectory;
 	private final Logger m_logger = LoggerFactory.getLogger(CommandBehaviourInjector.class);
 
-	public CommandBehaviourInjector(WindowManager windowManager, IWindowFactory windowFactory, EditorWeatherFactory weatherFactory, URI baseDirectory, IFontFactory fontFactory, Observers observers, EditorWorld world, ISceneBufferFactory sceneBufferFactory, ISceneModelFactory modelFactory, Brush workingBrush, SelectBrushQuery selectBrushQuery) {
+	public CommandBehaviourInjector(WindowManager windowManager, IWindowFactory windowFactory, EditorWeatherFactory weatherFactory, URI baseDirectory, IFontFactory fontFactory, Observers observers, EditorWorld world, ISceneBufferFactory sceneBufferFactory, ISceneModelFactory modelFactory, Brush workingBrush, SelectBrushQuery selectBrushQuery, SelectLayerQuery selectLayerQuery) {
 		super(windowManager, windowFactory);
-		
+
+		m_selectLayerQuery = selectLayerQuery;
 		m_weatherFactory = weatherFactory;
 		m_baseDirectory = baseDirectory;
 		m_fontFactory = fontFactory;
@@ -190,10 +193,13 @@ public class CommandBehaviourInjector extends BasicBehaviorInjector {
 		logicTimer.getObservers().add(new Timer.ITimerObserver() {
 			@Override
 			public void update(int deltaTime) {
-				if (m_selectBrushQuery.isVisible() != CommandBehaviourInjector.this.isVisible()) {
+				if (m_selectBrushQuery.isVisible() != CommandBehaviourInjector.this.isVisible() ||
+						m_selectLayerQuery.isVisible() != CommandBehaviourInjector.this.isVisible()) {
 					m_selectBrushQuery.setVisible(CommandBehaviourInjector.this.isVisible());
+					m_selectLayerQuery.setVisible(CommandBehaviourInjector.this.isVisible());
 				}
 				m_selectBrushQuery.poll();
+				m_selectLayerQuery.poll();
 				m_world.update(deltaTime);
 			}
 		});

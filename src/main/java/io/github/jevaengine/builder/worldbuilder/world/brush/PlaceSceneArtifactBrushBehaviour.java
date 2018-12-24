@@ -20,10 +20,14 @@ package io.github.jevaengine.builder.worldbuilder.world.brush;
 
 import io.github.jevaengine.builder.worldbuilder.world.EditorSceneArtifact;
 import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
+import io.github.jevaengine.math.Rect3F;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.world.Direction;
+import io.github.jevaengine.world.scene.model.DecoratedSceneModel;
 import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
 import io.github.jevaengine.world.scene.model.ISceneModel;
+
+import java.awt.*;
 import java.net.URI;
 
 public final class PlaceSceneArtifactBrushBehaviour implements IBrushBehaviour
@@ -46,7 +50,45 @@ public final class PlaceSceneArtifactBrushBehaviour implements IBrushBehaviour
 	@Override
 	public IImmutableSceneModel getModel()
 	{
-		return m_model;
+
+		return new DecoratedSceneModel(m_model, new IImmutableSceneModel.ISceneModelComponent() {
+
+			@Override
+			public void render(Graphics2D g, int x, int y, float scale) {
+				String noteString = "";
+				if(!m_isStatic)
+					noteString += "NT_ST";
+
+				if(!m_isTraversable)
+					noteString += ";NT_TRV";
+
+				g.setColor(Color.RED);
+				g.drawString(noteString, x, y);
+			}
+
+			@Override
+			public boolean testPick(int x, int y, float scale) {
+				return false;
+			}
+
+			@Override
+			public Rect3F getBounds() {
+				Vector3F mountPoint = m_model.getAABB().getPoint(0.5F, 1.1F, 0.0F);
+				return new Rect3F(mountPoint, 0, 0, 0);
+			}
+
+			@Override
+			public String getName()
+			{
+				return this.getClass().getName();
+			}
+
+			@Override
+			public Vector3F getOrigin()
+			{
+				return new Vector3F();
+			}
+		});
 	}
 	
 	@Override

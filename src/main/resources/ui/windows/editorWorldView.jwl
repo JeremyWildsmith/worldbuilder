@@ -1,8 +1,8 @@
 {
   "style": "local:///ui/style/tech/tech.juis",
   "bounds": {
-    "width": 1200,
-    "height": 630
+    "width": 1810,
+    "height": 900
   },
   "controls": [
     {
@@ -14,8 +14,8 @@
       },
       "config": {
         "bounds": {
-          "width": 1180,
-          "height": 550
+          "width": 1790,
+          "height": 810
         }
       }
     },

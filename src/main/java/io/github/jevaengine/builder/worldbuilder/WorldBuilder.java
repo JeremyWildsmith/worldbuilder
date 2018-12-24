@@ -45,7 +45,7 @@ public class WorldBuilder extends DefaultGame
 	
 	private Logger m_logger = LoggerFactory.getLogger(WorldBuilder.class);
 	
-	public WorldBuilder(IInputSource inputSource, IConfigurationFactory configurationFactory, ISceneBufferFactory sceneBufferFactory, ISpriteFactory spriteFactory, IWindowFactory windowFactory, IParallelWorldFactory worldFactory, IFontFactory fontFactory, ISceneModelFactory sceneModelFactory, IWeatherFactory weatherFactory, IEffectMapFactory effectMapFactory, Vector2D resolution, URI baseDirectory)
+	public WorldBuilder(IInputSource inputSource, IConfigurationFactory configurationFactory, ISceneBufferFactory sceneBufferFactory, ISpriteFactory spriteFactory, IWindowFactory windowFactory, IParallelWorldFactory worldFactory, IFontFactory fontFactory, ISceneModelFactory sceneModelFactory, IWeatherFactory weatherFactory, IEffectMapFactory effectMapFactory, Vector2D resolution, URI baseDirectory, WorldBuilderConfiguration config)
 	{
 		super(inputSource, resolution);
 		
@@ -60,7 +60,7 @@ public class WorldBuilder extends DefaultGame
 		
 		try
 		{
-			new FloatingToolbarFactory(getWindowManager(), windowFactory, sceneBufferFactory, sceneModelFactory, worldFactory, fontFactory, weatherFactory, effectMapFactory, baseDirectory).create().center();
+			new FloatingToolbarFactory(getWindowManager(), windowFactory, sceneBufferFactory, sceneModelFactory, worldFactory, fontFactory, weatherFactory, effectMapFactory, baseDirectory, config).create().center();
 		} catch (WindowConstructionException e)
 		{
 			m_logger.error("Error constructing world builder toolbar.", e);

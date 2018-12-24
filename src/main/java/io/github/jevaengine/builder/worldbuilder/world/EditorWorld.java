@@ -53,8 +53,9 @@ import java.util.Objects;
 public final class EditorWorld
 {
 	private final World m_world;
-	
-	private final WorldCursor m_worldCursor;
+
+	private Vector3F m_worldViewCursor = new Vector3F();
+	private final WorldEditCursor m_worldEditCursor;
 	private final ArrayList<EditorEntity> m_entities = new ArrayList<>();
 	private final ArrayList<EditorZone> m_zones = new ArrayList<>();
 	private final HashMap<TileLocation, EditorSceneArtifact> m_tiles = new HashMap<>();
@@ -72,7 +73,7 @@ public final class EditorWorld
 		m_logicPerUnit = world.getLogicPerUnit();
 		
 		m_world = world;
-		m_worldCursor = new WorldCursor(world);
+		m_worldEditCursor = new WorldEditCursor(world);
 		
 		for(IEntity e : world.getEntities().all())
 		{
@@ -112,10 +113,19 @@ public final class EditorWorld
 		camera.attach(m_world);
 	}
 
-	public WorldCursor getCursor()
+	public Vector3F getViewCursor()
 	{
-		return m_worldCursor;
+		return new Vector3F(m_worldViewCursor);
 	}
+	public void setViewCursor(Vector3F location)
+	{
+		m_worldViewCursor = new Vector3F(location);
+	}
+
+	public WorldEditCursor getEditCursor() {
+		return m_worldEditCursor;
+	}
+
 	
 	@Nullable
 	public EditorWeather getWeather()
@@ -244,6 +254,7 @@ public final class EditorWorld
 			decl.isTraversable = e.getKey().isTraversable();
 			decl.model = e.getKey().getModelName().toString();
 			decl.locations = new Vector3F[e.getValue().size()];
+			decl.isStatic = e.getKey().isStatic();
 			
 			for(int x = 0; x < e.getValue().size(); x++)
 				decl.locations[x] = new Vector3F(e.getValue().get(x));
@@ -291,12 +302,12 @@ public final class EditorWorld
 		return configuration;
 	}
 	
-	public static final class WorldCursor
+	public static final class WorldEditCursor
 	{
 		private final World m_hostWorld;
 		private final CursorEntity m_cursorEntity = new CursorEntity();
 		
-		private WorldCursor(World host)
+		private WorldEditCursor(World host)
 		{
 			m_hostWorld = host;
 			m_hostWorld.addEntity(m_cursorEntity);

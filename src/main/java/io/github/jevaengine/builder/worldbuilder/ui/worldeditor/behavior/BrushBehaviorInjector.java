@@ -14,12 +14,8 @@ import io.github.jevaengine.builder.worldbuilder.world.brush.PlaceSceneArtifactB
 import io.github.jevaengine.builder.worldbuilder.world.brush.SampleSceneArtifactBrushBehaviour;
 import io.github.jevaengine.joystick.InputKeyEvent;
 import io.github.jevaengine.joystick.InputMouseEvent;
-import io.github.jevaengine.ui.Button;
-import io.github.jevaengine.ui.IWindowFactory;
-import io.github.jevaengine.ui.NoSuchControlException;
-import io.github.jevaengine.ui.Timer;
-import io.github.jevaengine.ui.Window;
-import io.github.jevaengine.ui.WindowManager;
+import io.github.jevaengine.ui.*;
+
 import java.awt.event.KeyEvent;
 
 /**
@@ -42,14 +38,14 @@ public class BrushBehaviorInjector extends BasicBehaviorInjector {
 		final Timer logicTimer = new Timer();
 		addControl(logicTimer);
 
-		BrushSelectionController selectionController = new BrushSelectionController();
+		BrushSelectionController selectionController = new BrushSelectionController(getControl(WorldView.class, "worldView"));
 		getObservers().add(selectionController);
 		logicTimer.getObservers().add(selectionController);
 
 		m_brush.getObservers().add(new Brush.IBrushBehaviorObserver() {
 			@Override
 			public void behaviourChanged(IBrushBehaviour behaviour) {
-				m_world.getCursor().setModel(behaviour.getModel());
+				m_world.getEditCursor().setModel(behaviour.getModel());
 			}
 		});
 
@@ -76,6 +72,11 @@ public class BrushBehaviorInjector extends BasicBehaviorInjector {
 	private class BrushSelectionController implements Window.IWindowInputObserver, Window.IWindowFocusObserver, Timer.ITimerObserver {
 
 		private boolean m_applyBrush = false;
+		private WorldView m_view;
+
+		private BrushSelectionController(WorldView view) {
+			m_view = view;
+		}
 
 		@Override
 		public void update(int deltaTime) {
@@ -86,13 +87,7 @@ public class BrushBehaviorInjector extends BasicBehaviorInjector {
 
 		@Override
 		public void onKeyEvent(InputKeyEvent event) {
-			if (event.keyCode == KeyEvent.VK_ENTER) {
-				if (event.type == InputKeyEvent.KeyEventType.KeyUp) {
-					m_applyBrush = false;
-				} else if (event.type == InputKeyEvent.KeyEventType.KeyDown) {
-					m_applyBrush = true;
-				}
-			} else if (event.keyCode == KeyEvent.VK_R && event.type == InputKeyEvent.KeyEventType.KeyUp) {
+			if (event.keyCode == KeyEvent.VK_R && event.type == InputKeyEvent.KeyEventType.KeyUp) {
 				m_brush.setDirection(m_brush.getDirection().getClockwise());
 			}
 		}
@@ -106,6 +101,12 @@ public class BrushBehaviorInjector extends BasicBehaviorInjector {
 
 		@Override
 		public void onMouseEvent(InputMouseEvent event) {
+			if(event.type == InputMouseEvent.MouseEventType.MousePressed) {
+				if(m_view.getBounds().add(m_view.getLocation()).contains(event.location))
+					m_applyBrush = true;
+			} else if (event.type == InputMouseEvent.MouseEventType.MouseReleased) {
+				m_applyBrush = false;
+			}
 		}
 
 	}

@@ -12,10 +12,7 @@ import io.github.jevaengine.graphics.IRenderable;
 import io.github.jevaengine.graphics.NullGraphic;
 import io.github.jevaengine.joystick.InputKeyEvent;
 import io.github.jevaengine.joystick.InputMouseEvent;
-import io.github.jevaengine.math.Matrix3X3;
-import io.github.jevaengine.math.Rect2D;
-import io.github.jevaengine.math.Vector2D;
-import io.github.jevaengine.math.Vector3F;
+import io.github.jevaengine.math.*;
 import io.github.jevaengine.ui.Button;
 import io.github.jevaengine.ui.IWindowFactory;
 import io.github.jevaengine.ui.Label;
@@ -30,14 +27,13 @@ import io.github.jevaengine.world.scene.ISceneBuffer.ISceneBufferEffect;
 import io.github.jevaengine.world.scene.ISceneBuffer.ISceneComponentEffect;
 import io.github.jevaengine.world.scene.camera.ControlledCamera;
 import io.github.jevaengine.world.scene.effect.DebugDrawComponent;
-import java.awt.AlphaComposite;
-import java.awt.Composite;
-import java.awt.Graphics2D;
+import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
 /**
- *
  * @author Jeremy
  */
 public class CameraBehaviorInjector extends BasicBehaviorInjector {
@@ -63,7 +59,7 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
 
         addControl(logicTimer);
         worldView.setCamera(m_camera);
-        
+
         m_camera.addEffect(new HideOverCursorEffect());
 
         logicTimer.getObservers().add(cameraController);
@@ -73,7 +69,7 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
         logicTimer.getObservers().add(new Timer.ITimerObserver() {
             @Override
             public void update(int deltaTime) {
-                Vector3F coordinates = m_world.getCursor().getLocation();
+                Vector3F coordinates = m_world.getEditCursor().getLocation();
                 lblCursorCoordinates.setText(String.format("%f, %f, %f; Snap: %f", coordinates.x, coordinates.y, coordinates.z, cameraController.getCursorSnapGridSize()));
                 EditorSceneArtifact tile = m_world.getTile(coordinates);
                 lblIsTraversable.setText(tile == null || tile.isTraversable() ? "true" : "false");
@@ -82,23 +78,24 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
 
         getControl(Button.class, "btnAdjustDepth").getObservers().add(new Button.IButtonPressObserver() {
             private ISceneBufferEffect effect = new DebugDrawComponent();
+
             @Override
             public void onPress() {
-                displayTextInput("Cursor Depth", Float.toString(m_world.getCursor().getLocation().z), new AdjustDepthListener());
+                displayTextInput("Cursor Depth", Float.toString(m_world.getEditCursor().getLocation().z), new AdjustDepthListener());
             }
         });
 
         getControl(Button.class, "btnToggleWireframe").getObservers().add(new Button.IButtonPressObserver() {
             private final ISceneBufferEffect effect = new DebugDrawComponent();
             private boolean applied = false;
-            
+
             @Override
             public void onPress() {
-                if(applied)
+                if (applied)
                     m_camera.removeEffect(effect);
                 else
                     m_camera.addEffect(effect);
-            
+
                 applied = !applied;
             }
         });
@@ -161,9 +158,9 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
         @Override
         public void okay(String input) {
             try {
-                Vector3F cursorLocation = m_world.getCursor().getLocation();
+                Vector3F cursorLocation = m_world.getEditCursor().getLocation();
                 cursorLocation.z = Float.parseFloat(input);
-                m_camera.lookAt(cursorLocation);
+                m_world.getEditCursor().setLocation(cursorLocation);
             } catch (NumberFormatException e) {
                 displayMessage("Depth must be a properly formed floating point.");
             }
@@ -190,25 +187,26 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
         public ISceneBuffer.ISceneComponentEffect[] getComponentEffect(final Graphics2D g, int offsetX, int offsetY, float scale, Vector2D renderLocation, Matrix3X3 projection, ISceneBuffer.ISceneBufferEntry subject, Collection<ISceneBuffer.ISceneBufferEntry> beneath) {
             IEntity dispatcher = subject.getDispatcher();
 
-            if (dispatcher == null || dispatcher.getBody().getLocation().z < m_world.getCursor().getLocation().z + 0.0001) {
+            if (dispatcher == null || dispatcher.getBody().getLocation().z < m_world.getEditCursor().getLocation().z + 0.0001) {
                 return new ISceneComponentEffect[0];
             }
 
             return new ISceneComponentEffect[]{
-                new ISceneComponentEffect() {
-                    private Composite m_oldComposite;
+                    new ISceneComponentEffect() {
+                        @Override
+                        public void prerender() {
+                        }
 
-                    @Override
-                    public void prerender() {
-                        m_oldComposite = g.getComposite();
-                        g.setComposite(AlphaComposite.SrcOver.derive(0.1f));
-                    }
+                        @Override
+                        public boolean ignore(IEntity dispatcher, IImmutableSceneModel.ISceneModelComponent c) {
+                            return true;
+                        }
 
-                    @Override
-                    public void postrender() {
-                        g.setComposite(m_oldComposite);
+                        @Override
+                        public void postrender() {
+
+                        }
                     }
-                }
             };
         }
 
@@ -217,7 +215,7 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
     private class CameraController implements Window.IWindowFocusObserver, Timer.ITimerObserver, WorldView.IWorldViewInputObserver {
 
         private Vector3F m_cameraMovement = new Vector3F();
-        private float m_snapGridSize = 0.5F;
+        private float m_snapGridSize = 1.0F;
         private final WorldView m_worldView;
 
         public CameraController(WorldView worldView) {
@@ -227,11 +225,8 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
         @Override
         public void update(int deltaTime) {
             if (!m_cameraMovement.isZero()) {
-                m_camera.move(m_cameraMovement.normalize().multiply(deltaTime / 200.0F * m_snapGridSize));
+                m_camera.move(m_cameraMovement.normalize().multiply(deltaTime / 200.0F * m_snapGridSize * 50));
             }
-            float x = (int) (m_camera.getLookAt().x / m_snapGridSize) * m_snapGridSize;
-            float y = Math.round(m_camera.getLookAt().y / m_snapGridSize) * m_snapGridSize;
-            m_world.getCursor().setLocation(new Vector3F(x, y, m_camera.getLookAt().z));
         }
 
         public float getCursorSnapGridSize() {
@@ -282,11 +277,14 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
 
         @Override
         public void mouseEvent(InputMouseEvent event) {
-            if (event.mouseButton == InputMouseEvent.MouseButton.Left && event.type == InputMouseEvent.MouseEventType.MouseClicked) {
-                IEntity tile = m_worldView.pick(IEntity.class, event.location);
-                if (tile != null) {
-                    m_camera.lookAt(tile.getBody().getLocation());
-                }
+            if (event.type == InputMouseEvent.MouseEventType.MouseMoved) {
+                Vector2F location = m_worldView.translateScreenToWorld(new Vector2F(event.location));
+
+                location.x = (int) (location.x / m_snapGridSize) * m_snapGridSize;
+                location.y = Math.round(location.y / m_snapGridSize) * m_snapGridSize;
+                float z = m_world.getEditCursor().getLocation().z;
+
+                m_world.getEditCursor().setLocation(new Vector3F(location, z));
             }
         }
 

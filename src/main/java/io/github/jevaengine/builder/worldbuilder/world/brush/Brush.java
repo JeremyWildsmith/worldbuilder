@@ -43,7 +43,7 @@ public final class Brush
 	
 	public void apply(EditorWorld world)
 	{
-		Vector3F location = world.getCursor().getLocation();
+		Vector3F location = world.getEditCursor().getLocation();
 		m_behaviour.apply(world, location);
 	}
 	

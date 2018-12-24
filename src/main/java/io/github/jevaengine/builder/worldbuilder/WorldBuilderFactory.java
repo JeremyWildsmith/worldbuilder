@@ -27,11 +27,7 @@ import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.graphics.ISpriteFactory;
 import io.github.jevaengine.joystick.IInputSource;
 import io.github.jevaengine.ui.IWindowFactory;
-import io.github.jevaengine.world.IEffectMapFactory;
-import io.github.jevaengine.world.IParallelWorldFactory;
-import io.github.jevaengine.world.IWeatherFactory;
-import io.github.jevaengine.world.IWorldFactory;
-import io.github.jevaengine.world.ThreadPooledWorldFactory;
+import io.github.jevaengine.world.*;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
 import java.net.URI;
@@ -43,7 +39,9 @@ public final class WorldBuilderFactory implements IGameFactory
 	@Inject
 	@Named("BASE_DIRECTORY")
 	private URI m_baseDirectory;
-	
+
+	private final WorldBuilderConfiguration m_config;
+
 	private final IInputSource m_inputSource;
 	private final IRenderer m_renderer;
 	private final ISceneBufferFactory m_sceneBufferFactory;
@@ -57,7 +55,7 @@ public final class WorldBuilderFactory implements IGameFactory
 	private final IEffectMapFactory m_effectMapFactory;
 	
 	@Inject
-	public WorldBuilderFactory(IInputSource inputSource, IConfigurationFactory configurationFactory, IRenderer renderer, ISceneBufferFactory sceneBufferFactory, ISpriteFactory spriteFactory, IWindowFactory windowFactory, IWorldFactory worldFactory, IEngineThreadPool engineThreadPool, IFontFactory fontFactory, ISceneModelFactory sceneModelFactory, IWeatherFactory weatherFactory, IEffectMapFactory effectMapFactory)
+	public WorldBuilderFactory(IInputSource inputSource, IConfigurationFactory configurationFactory, IRenderer renderer, ISceneBufferFactory sceneBufferFactory, ISpriteFactory spriteFactory, IWindowFactory windowFactory, IWorldFactory worldFactory, IEngineThreadPool engineThreadPool, IFontFactory fontFactory, ISceneModelFactory sceneModelFactory, IWeatherFactory weatherFactory, IEffectMapFactory effectMapFactory, WorldBuilderConfiguration config)
 	{
 		m_inputSource = inputSource;
 		m_configurationFactory = configurationFactory;
@@ -70,6 +68,7 @@ public final class WorldBuilderFactory implements IGameFactory
 		m_sceneModelFactory = sceneModelFactory;
 		m_weatherFactory = weatherFactory;
 		m_effectMapFactory = effectMapFactory;
+		m_config = config;
 	}
 	
 	@Override
@@ -79,6 +78,6 @@ public final class WorldBuilderFactory implements IGameFactory
 		//it will not be injected. The implementation assumes that it will be.
 		assert m_baseDirectory != null: "BASE_DIRECTORY was not injected into WorldBuilder";
 		
-		return new WorldBuilder(m_inputSource, m_configurationFactory, m_sceneBufferFactory, m_spriteFactory, m_windowFactory, m_worldFactory, m_fontFactory, m_sceneModelFactory, m_weatherFactory, m_effectMapFactory, m_renderer.getResolution(), m_baseDirectory);
+		return new WorldBuilder(m_inputSource, m_configurationFactory, m_sceneBufferFactory, m_spriteFactory, m_windowFactory, m_worldFactory, m_fontFactory, m_sceneModelFactory, m_weatherFactory, m_effectMapFactory, m_renderer.getResolution(), m_baseDirectory, m_config);
 	}
 }

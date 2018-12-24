@@ -246,6 +246,10 @@ public final class EditorEntity
 		@Override
 		public IImmutableSceneModel getModel()
 		{
+			Direction d = this.getBody().getDirection();
+			if(d != Direction.Zero)
+				m_sceneModel.setDirection(this.getBody().getDirection());
+
 			return new DecoratedSceneModel(m_sceneModel, new ISceneModelComponent[] {
 					new ISceneModelComponent() {
 						
@@ -336,7 +340,8 @@ public final class EditorEntity
 		}
 
 		@Override
-		public void update(int delta) { }
+		public void update(int delta) {
+		}
 
 		@Override
 		public boolean isStatic() {
