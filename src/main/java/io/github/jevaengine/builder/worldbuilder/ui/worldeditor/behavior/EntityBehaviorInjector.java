@@ -15,22 +15,17 @@ import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.joystick.InputKeyEvent;
 import io.github.jevaengine.joystick.InputMouseEvent;
 import io.github.jevaengine.math.Vector2D;
-import io.github.jevaengine.math.Vector3F;
-import io.github.jevaengine.ui.Button;
-import io.github.jevaengine.ui.IWindowFactory;
-import io.github.jevaengine.ui.MenuStrip;
-import io.github.jevaengine.ui.NoSuchControlException;
-import io.github.jevaengine.ui.WindowManager;
-import io.github.jevaengine.ui.WorldView;
+import io.github.jevaengine.ui.*;
 import io.github.jevaengine.util.Nullable;
 import io.github.jevaengine.world.entity.IEntity;
 import io.github.jevaengine.world.scene.camera.ControlledCamera;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *

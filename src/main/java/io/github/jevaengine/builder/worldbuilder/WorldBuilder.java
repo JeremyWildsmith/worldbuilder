@@ -35,9 +35,10 @@ import io.github.jevaengine.world.IParallelWorldFactory;
 import io.github.jevaengine.world.IWeatherFactory;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
-import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
 
 public class WorldBuilder extends DefaultGame
 {

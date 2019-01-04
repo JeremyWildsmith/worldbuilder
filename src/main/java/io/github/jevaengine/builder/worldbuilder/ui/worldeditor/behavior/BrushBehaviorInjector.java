@@ -7,11 +7,7 @@ package io.github.jevaengine.builder.worldbuilder.ui.worldeditor.behavior;
 
 import io.github.jevaengine.builder.worldbuilder.world.EditorSceneArtifact;
 import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
-import io.github.jevaengine.builder.worldbuilder.world.brush.Brush;
-import io.github.jevaengine.builder.worldbuilder.world.brush.ClearTileBrushBehaviour;
-import io.github.jevaengine.builder.worldbuilder.world.brush.IBrushBehaviour;
-import io.github.jevaengine.builder.worldbuilder.world.brush.PlaceSceneArtifactBrushBehaviour;
-import io.github.jevaengine.builder.worldbuilder.world.brush.SampleSceneArtifactBrushBehaviour;
+import io.github.jevaengine.builder.worldbuilder.world.brush.*;
 import io.github.jevaengine.joystick.InputKeyEvent;
 import io.github.jevaengine.joystick.InputMouseEvent;
 import io.github.jevaengine.ui.*;

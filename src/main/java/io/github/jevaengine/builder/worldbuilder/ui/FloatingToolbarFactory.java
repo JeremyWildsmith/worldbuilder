@@ -18,8 +18,6 @@
  */
 package io.github.jevaengine.builder.worldbuilder.ui;
 
-import io.github.jevaengine.builder.worldbuilder.WorldBuilderConfiguration;
-import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.EditorWorldViewFactory;
 import io.github.jevaengine.FutureResult;
 import io.github.jevaengine.IDisposable;
 import io.github.jevaengine.IInitializationMonitor;
@@ -28,26 +26,21 @@ import io.github.jevaengine.builder.ui.MessageBoxFactory.IMessageBoxObserver;
 import io.github.jevaengine.builder.ui.MessageBoxFactory.MessageBox;
 import io.github.jevaengine.builder.ui.StatusDialogueFactory;
 import io.github.jevaengine.builder.ui.StatusDialogueFactory.StatusDialogue;
-import io.github.jevaengine.builder.worldbuilder.ui.CreateWorldQueryFactory;
+import io.github.jevaengine.builder.worldbuilder.WorldBuilderConfiguration;
 import io.github.jevaengine.builder.worldbuilder.ui.CreateWorldQueryFactory.CreateWorldQuery;
 import io.github.jevaengine.builder.worldbuilder.ui.CreateWorldQueryFactory.ICreateWorldQueryObserver;
-import io.github.jevaengine.builder.worldbuilder.ui.OpenWorldQueryFactory;
 import io.github.jevaengine.builder.worldbuilder.ui.OpenWorldQueryFactory.IOpenWorldQueryObserver;
 import io.github.jevaengine.builder.worldbuilder.ui.OpenWorldQueryFactory.OpenWorldQuery;
-import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
 import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.EditorWorldView;
+import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.EditorWorldViewFactory;
 import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.EditorWorldViewFactory.IEditorWorldViewObserver;
+import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
 import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.math.Vector2D;
 import io.github.jevaengine.script.NullScriptBuilder;
-import io.github.jevaengine.ui.Button;
+import io.github.jevaengine.ui.*;
 import io.github.jevaengine.ui.Button.IButtonPressObserver;
-import io.github.jevaengine.ui.IWindowFactory;
 import io.github.jevaengine.ui.IWindowFactory.WindowConstructionException;
-import io.github.jevaengine.ui.NoSuchControlException;
-import io.github.jevaengine.ui.Window;
-import io.github.jevaengine.ui.WindowBehaviourInjector;
-import io.github.jevaengine.ui.WindowManager;
 import io.github.jevaengine.world.IEffectMapFactory;
 import io.github.jevaengine.world.IParallelWorldFactory;
 import io.github.jevaengine.world.IWeatherFactory;
@@ -58,11 +51,11 @@ import io.github.jevaengine.world.entity.NullEntityFactory;
 import io.github.jevaengine.world.physics.NullPhysicsWorldFactory;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
-import java.net.URI;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.util.Map;
 
 public final class FloatingToolbarFactory
 {

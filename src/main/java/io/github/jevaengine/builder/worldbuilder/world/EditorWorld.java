@@ -43,12 +43,8 @@ import io.github.jevaengine.world.physics.NullPhysicsBody;
 import io.github.jevaengine.world.scene.camera.ICamera;
 import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
 import io.github.jevaengine.world.scene.model.NullSceneModel;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+
+import java.util.*;
 
 public final class EditorWorld
 {

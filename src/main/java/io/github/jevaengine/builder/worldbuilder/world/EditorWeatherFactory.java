@@ -11,7 +11,8 @@ import io.github.jevaengine.math.Rect2D;
 import io.github.jevaengine.math.Vector2D;
 import io.github.jevaengine.world.IWeatherFactory;
 import io.github.jevaengine.world.scene.ISceneBuffer;
-import java.awt.Graphics2D;
+
+import java.awt.*;
 import java.net.URI;
 import java.util.Collection;
 

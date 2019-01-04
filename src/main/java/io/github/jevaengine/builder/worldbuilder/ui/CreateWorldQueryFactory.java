@@ -23,21 +23,16 @@ import io.github.jevaengine.builder.ui.MessageBoxFactory;
 import io.github.jevaengine.builder.ui.MessageBoxFactory.IMessageBoxObserver;
 import io.github.jevaengine.builder.ui.MessageBoxFactory.MessageBox;
 import io.github.jevaengine.math.Vector2D;
-import io.github.jevaengine.ui.Button;
+import io.github.jevaengine.ui.*;
 import io.github.jevaengine.ui.Button.IButtonPressObserver;
-import io.github.jevaengine.ui.IWindowFactory;
 import io.github.jevaengine.ui.IWindowFactory.WindowConstructionException;
-import io.github.jevaengine.ui.NoSuchControlException;
-import io.github.jevaengine.ui.TextArea;
-import io.github.jevaengine.ui.Window;
-import io.github.jevaengine.ui.WindowBehaviourInjector;
-import io.github.jevaengine.ui.WindowManager;
 import io.github.jevaengine.util.IObserverRegistry;
 import io.github.jevaengine.util.Nullable;
 import io.github.jevaengine.util.Observers;
-import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
 
 public final class CreateWorldQueryFactory
 {

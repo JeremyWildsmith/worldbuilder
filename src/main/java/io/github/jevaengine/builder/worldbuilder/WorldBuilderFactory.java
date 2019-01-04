@@ -30,9 +30,10 @@ import io.github.jevaengine.ui.IWindowFactory;
 import io.github.jevaengine.world.*;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
-import java.net.URI;
+
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.net.URI;
 
 public final class WorldBuilderFactory implements IGameFactory
 {

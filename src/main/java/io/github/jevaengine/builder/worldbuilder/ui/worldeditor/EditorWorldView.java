@@ -12,10 +12,11 @@ import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
 import io.github.jevaengine.math.Vector2D;
 import io.github.jevaengine.ui.Window;
 import io.github.jevaengine.util.IObserverRegistry;
-import java.lang.reflect.InvocationTargetException;
-import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  *

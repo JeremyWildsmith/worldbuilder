@@ -9,12 +9,7 @@ import io.github.jevaengine.builder.ui.FileInputQueryFactory;
 import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQuery;
 import io.github.jevaengine.builder.worldbuilder.ui.SelectLayerQuery;
 import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.EditorWorldViewFactory;
-import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.behavior.BasicBehaviorInjector;
-import io.github.jevaengine.builder.worldbuilder.world.EditorEntity;
-import io.github.jevaengine.builder.worldbuilder.world.EditorSceneArtifact;
-import io.github.jevaengine.builder.worldbuilder.world.EditorWeatherFactory;
-import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
-import io.github.jevaengine.builder.worldbuilder.world.EditorZone;
+import io.github.jevaengine.builder.worldbuilder.world.*;
 import io.github.jevaengine.builder.worldbuilder.world.brush.Brush;
 import io.github.jevaengine.builder.worldbuilder.world.brush.MoveEntityBrushBehaviour;
 import io.github.jevaengine.builder.worldbuilder.world.brush.NullBrushBehaviour;
@@ -24,13 +19,7 @@ import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.joystick.InputKeyEvent;
 import io.github.jevaengine.joystick.InputMouseEvent;
 import io.github.jevaengine.math.Vector2D;
-import io.github.jevaengine.ui.Button;
-import io.github.jevaengine.ui.IWindowFactory;
-import io.github.jevaengine.ui.MenuStrip;
-import io.github.jevaengine.ui.NoSuchControlException;
-import io.github.jevaengine.ui.Timer;
-import io.github.jevaengine.ui.WindowManager;
-import io.github.jevaengine.ui.WorldView;
+import io.github.jevaengine.ui.*;
 import io.github.jevaengine.util.Observers;
 import io.github.jevaengine.world.DefaultWorldFactory;
 import io.github.jevaengine.world.IWeatherFactory;
@@ -38,6 +27,9 @@ import io.github.jevaengine.world.entity.IEntity;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
 import io.github.jevaengine.world.scene.camera.ControlledCamera;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,8 +38,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *

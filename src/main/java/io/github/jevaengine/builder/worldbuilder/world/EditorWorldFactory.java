@@ -38,9 +38,10 @@ import io.github.jevaengine.world.physics.IPhysicsWorldFactory;
 import io.github.jevaengine.world.scene.model.ISceneModel;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory.SceneModelConstructionException;
+
+import javax.inject.Inject;
 import java.net.URI;
 import java.net.URISyntaxException;
-import javax.inject.Inject;
 
 public final class EditorWorldFactory extends DefaultWorldFactory
 {

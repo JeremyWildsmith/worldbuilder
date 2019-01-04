@@ -40,14 +40,13 @@ import io.github.jevaengine.world.physics.NonparticipantPhysicsBody;
 import io.github.jevaengine.world.scene.model.*;
 import io.github.jevaengine.world.scene.model.IImmutableSceneModel.ISceneModelComponent;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory.SceneModelConstructionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class EditorEntity
 {

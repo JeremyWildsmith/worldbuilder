@@ -22,11 +22,7 @@ import io.github.jevaengine.graphics.IFont;
 import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.graphics.IFontFactory.FontConstructionException;
 import io.github.jevaengine.graphics.NullFont;
-import io.github.jevaengine.math.Matrix3X3;
-import io.github.jevaengine.math.Rect2D;
-import io.github.jevaengine.math.Rect3F;
-import io.github.jevaengine.math.Vector2D;
-import io.github.jevaengine.math.Vector3F;
+import io.github.jevaengine.math.*;
 import io.github.jevaengine.util.IObserverRegistry;
 import io.github.jevaengine.util.NullObservers;
 import io.github.jevaengine.world.DefaultWorldFactory.WorldConfiguration.ZoneDeclaration;
@@ -40,20 +36,14 @@ import io.github.jevaengine.world.physics.IPhysicsBody;
 import io.github.jevaengine.world.physics.NonparticipantPhysicsBody;
 import io.github.jevaengine.world.physics.PhysicsBodyShape;
 import io.github.jevaengine.world.scene.model.IImmutableSceneModel;
-import io.github.jevaengine.world.scene.model.IImmutableSceneModel.ISceneModelComponent;
 import io.github.jevaengine.world.scene.model.ISceneModel;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Stroke;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.awt.*;
+import java.net.URI;
+import java.util.*;
+import java.util.List;
 
 public final class EditorZone
 {

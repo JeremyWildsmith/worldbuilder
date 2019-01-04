@@ -22,7 +22,6 @@ import io.github.jevaengine.builder.worldbuilder.world.EditorEntity;
 import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
 import io.github.jevaengine.math.Vector3F;
 import io.github.jevaengine.world.Direction;
-import io.github.jevaengine.world.entity.IEntity;
 import io.github.jevaengine.world.scene.model.ISceneModel;
 import io.github.jevaengine.world.scene.model.NullSceneModel;
 

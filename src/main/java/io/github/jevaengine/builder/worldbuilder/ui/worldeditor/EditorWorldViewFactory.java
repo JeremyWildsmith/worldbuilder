@@ -18,17 +18,12 @@
  */
 package io.github.jevaengine.builder.worldbuilder.ui.worldeditor;
 
-import io.github.jevaengine.builder.worldbuilder.Main;
-import io.github.jevaengine.builder.worldbuilder.ui.SelectLayerQuery;
-import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.behavior.CommandBehaviourInjector;
-import io.github.jevaengine.builder.worldbuilder.world.brush.Brush;
 import io.github.jevaengine.builder.worldbuilder.ui.SelectBrushQuery;
-import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.behavior.BrushBehaviorInjector;
-import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.behavior.CameraBehaviorInjector;
-import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.behavior.EntityBehaviorInjector;
-import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.behavior.ZoneBehaviorInjector;
-import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
+import io.github.jevaengine.builder.worldbuilder.ui.SelectLayerQuery;
+import io.github.jevaengine.builder.worldbuilder.ui.worldeditor.behavior.*;
 import io.github.jevaengine.builder.worldbuilder.world.EditorWeatherFactory;
+import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
+import io.github.jevaengine.builder.worldbuilder.world.brush.Brush;
 import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.ui.IWindowFactory;
 import io.github.jevaengine.ui.IWindowFactory.WindowConstructionException;
@@ -36,11 +31,11 @@ import io.github.jevaengine.ui.NoSuchControlException;
 import io.github.jevaengine.ui.Window;
 import io.github.jevaengine.ui.WindowManager;
 import io.github.jevaengine.util.Observers;
-import io.github.jevaengine.world.DefaultWorldFactory;
 import io.github.jevaengine.world.IWeatherFactory;
 import io.github.jevaengine.world.scene.ISceneBufferFactory;
 import io.github.jevaengine.world.scene.camera.ControlledCamera;
 import io.github.jevaengine.world.scene.model.ISceneModelFactory;
+
 import java.io.File;
 import java.net.URI;
 import java.util.Map;
