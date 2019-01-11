@@ -58,13 +58,13 @@ public final class EditorWeatherFactory implements IWeatherFactory {
 		}
 
 		@Override
-		public IRenderable getUnderlay(Rect2D bounds, Matrix3X3 projection) {
-			return m_weather.getUnderlay(bounds, projection);
+		public IRenderable getUnderlay(Vector2D translation, Rect2D bounds, Matrix3X3 projection) {
+			return m_weather.getUnderlay(translation, bounds, projection);
 		}
 
 		@Override
-		public IRenderable getOverlay(Rect2D bounds, Matrix3X3 projection) {
-			return m_weather.getOverlay(bounds, projection);
+		public IRenderable getOverlay(Vector2D translation, Rect2D bounds, Matrix3X3 projection) {
+			return m_weather.getOverlay(translation, bounds, projection);
 		}
 
 		@Override
