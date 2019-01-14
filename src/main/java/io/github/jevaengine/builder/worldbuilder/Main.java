@@ -212,7 +212,7 @@ public class Main implements WindowListener, Runnable
 				public IGraphicFactory get() {
 					ExtentionMuxedGraphicFactory muxedGraphicFactory = new ExtentionMuxedGraphicFactory(new BufferedImageGraphicFactory(renderer, assetStreamFactory));
 					IGraphicFactory graphicFactory = new CachedGraphicFactory(muxedGraphicFactory);
-					muxedGraphicFactory.put(".sgf", new ShadedGraphicFactory(new DefaultGraphicShaderFactory(configurationFactory), graphicFactory, configurationFactory));
+					muxedGraphicFactory.put(".sgf", new ShadedGraphicFactory(new DefaultGraphicShaderFactory(this, configurationFactory), graphicFactory, configurationFactory));
 					return graphicFactory;
 				}
 			});
