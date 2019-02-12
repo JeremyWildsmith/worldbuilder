@@ -114,7 +114,7 @@ public class SelectBrushQuery extends javax.swing.JFrame {
         jScrollPane1.setViewportView(browseBrushTree);
         browseBrushTree.getAccessibleContext().setAccessibleName("");
 
-        btnRefresh.setLabel("Refresh");
+        btnRefresh.setText("Refresh");
         btnRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRefreshActionPerformed(evt);
