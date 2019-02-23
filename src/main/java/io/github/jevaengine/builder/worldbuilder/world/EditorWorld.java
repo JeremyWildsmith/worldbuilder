@@ -59,8 +59,9 @@ public final class EditorWorld
 	private float m_metersPerUnit = 0;
 	private float m_logicPerUnit = 0;
 	private float m_maxFrictionForce = 0;
-	
 	private String m_script = "";
+
+	private final List<Float> m_hiddenLayers = new ArrayList();
 	
 	public EditorWorld(World world, IFontFactory fontFactory)
 	{
@@ -99,6 +100,18 @@ public final class EditorWorld
 		return new TileLocation(new Vector3F(Math.min(Math.max((float)worldBounds.x, location.x), worldBounds.x + worldBounds.width - 1),
 												Math.min(Math.max((float)worldBounds.y, location.y), worldBounds.y + worldBounds.height - 1),
 												location.z));
+	}
+
+	public List<Float> getHiddenLayers() {
+		return new ArrayList<>(m_hiddenLayers);
+	}
+
+	public void clearHiddenLayers() {
+		m_hiddenLayers.clear();
+	}
+
+	public void addHiddenLayer(float z) {
+		m_hiddenLayers.add(z);
 	}
 	
 	public void update(int deltaTime) {

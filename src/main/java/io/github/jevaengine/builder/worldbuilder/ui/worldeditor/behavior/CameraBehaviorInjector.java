@@ -8,8 +8,6 @@ package io.github.jevaengine.builder.worldbuilder.ui.worldeditor.behavior;
 import io.github.jevaengine.builder.ui.TextInputQueryFactory.ITextInputQueryObserver;
 import io.github.jevaengine.builder.worldbuilder.world.EditorSceneArtifact;
 import io.github.jevaengine.builder.worldbuilder.world.EditorWorld;
-import io.github.jevaengine.graphics.IRenderable;
-import io.github.jevaengine.graphics.NullGraphic;
 import io.github.jevaengine.joystick.InputKeyEvent;
 import io.github.jevaengine.joystick.InputMouseEvent;
 import io.github.jevaengine.math.*;
@@ -56,7 +54,7 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
         addControl(logicTimer);
         worldView.setCamera(m_camera);
 
-        m_camera.addEffect(new HideOverCursorEffect());
+        m_camera.addEffect(new HideHiddenLayersEffect());
 
         logicTimer.getObservers().add(cameraController);
         worldView.getObservers().add(cameraController);
@@ -167,32 +165,36 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
         }
     }
 
-    private class HideOverCursorEffect implements ISceneBuffer.ISceneBufferEffect {
+    private class HideHiddenLayersEffect implements ISceneBuffer.ISceneBufferEffect {
         @Override
         public ISceneBuffer.ISceneComponentEffect[] getComponentEffect(final Graphics2D g, int offsetX, int offsetY, float scale, Vector2D renderLocation, Matrix3X3 projection, ISceneBuffer.ISceneBufferEntry subject, Collection<ISceneBuffer.ISceneBufferEntry> beneath) {
             IEntity dispatcher = subject.getDispatcher();
 
-            if (dispatcher == null || dispatcher.getBody().getLocation().z < m_world.getEditCursor().getLocation().z + 0.0001) {
-                return new ISceneComponentEffect[0];
+            if(dispatcher != null) {
+                for (float f : m_world.getHiddenLayers()) {
+                    if (Math.abs(dispatcher.getBody().getLocation().z - f) < 0.0001) {
+                        return new ISceneComponentEffect[]{
+                                new ISceneComponentEffect() {
+                                    @Override
+                                    public void prerender() {
+                                    }
+
+                                    @Override
+                                    public boolean ignore(IEntity dispatcher, IImmutableSceneModel.ISceneModelComponent c) {
+                                        return true;
+                                    }
+
+                                    @Override
+                                    public void postrender() {
+
+                                    }
+                                }
+                        };
+                    }
+                }
             }
 
-            return new ISceneComponentEffect[]{
-                    new ISceneComponentEffect() {
-                        @Override
-                        public void prerender() {
-                        }
-
-                        @Override
-                        public boolean ignore(IEntity dispatcher, IImmutableSceneModel.ISceneModelComponent c) {
-                            return true;
-                        }
-
-                        @Override
-                        public void postrender() {
-
-                        }
-                    }
-            };
+            return new ISceneComponentEffect[0];
         }
 
     }

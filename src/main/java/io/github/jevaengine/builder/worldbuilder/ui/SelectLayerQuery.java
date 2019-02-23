@@ -69,6 +69,14 @@ public class SelectLayerQuery extends javax.swing.JFrame {
 				m_world.getEditCursor().setLocation(location);
 			}
 
+			m_world.clearHiddenLayers();
+			for(int i = 0; i < browseLayers.getModel().getSize(); i++) {
+				JCheckBoxList.Datum<Layer> d = browseLayers.getModel().getElementAt(i);
+				if(!d.isChecked()) {
+					m_world.addHiddenLayer(d.info.depth);
+				}
+			}
+
 		}
 
 		m_lastSelectedModel = null;

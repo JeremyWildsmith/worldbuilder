@@ -15,11 +15,13 @@ public class JCheckBoxList<T extends Comparable<T>> extends JList<JCheckBoxList.
         setCellRenderer(new CellRenderer());
         addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent e) {
-                int index = locationToIndex(e.getPoint());
-                if (index != -1) {
-                    JCheckBox checkbox = (JCheckBox) getModel().getElementAt(index).checkBox;
-                    checkbox.setSelected(!checkbox.isSelected());
-                    repaint();
+                if (e.getClickCount() >= 2) {
+                    int index = locationToIndex(e.getPoint());
+                    if (index != -1) {
+                        JCheckBox checkbox = (JCheckBox) getModel().getElementAt(index).checkBox;
+                        checkbox.setSelected(!checkbox.isSelected());
+                        repaint();
+                    }
                 }
             }
         });
@@ -66,6 +68,10 @@ public class JCheckBoxList<T extends Comparable<T>> extends JList<JCheckBoxList.
         @Override
         public int compareTo(Datum<T> tDatum) {
             return info.compareTo(tDatum.info);
+        }
+
+        public boolean isChecked() {
+            return checkBox.isSelected();
         }
     }
 }
