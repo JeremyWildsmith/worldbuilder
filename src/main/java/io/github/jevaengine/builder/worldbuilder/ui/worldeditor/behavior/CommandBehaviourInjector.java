@@ -256,6 +256,13 @@ public class CommandBehaviourInjector extends BasicBehaviorInjector {
 			}
 		});
 
+		getControl(Button.class, "btnResetBrush").getObservers().add(new Button.IButtonPressObserver() {
+			@Override
+			public void onPress() {
+				m_workingBrush.setBehaviour(new NullBrushBehaviour());
+			}
+		});
+
 		getControl(Button.class, "btnSave").getObservers().add(new Button.IButtonPressObserver() {
 			@Override
 			public void onPress() {
