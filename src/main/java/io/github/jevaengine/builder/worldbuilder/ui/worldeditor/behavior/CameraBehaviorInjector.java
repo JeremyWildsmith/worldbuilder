@@ -197,7 +197,7 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
 
     }
 
-    private class CameraController implements Window.IWindowFocusObserver, Timer.ITimerObserver, WorldView.IWorldViewInputObserver {
+    private class CameraController implements Window.IWindowFocusObserver, Timer.ITimerObserver, WorldView.IWorldViewInputObserver, Window.IWindowInputObserver {
 
         private Vector3F m_cameraMovement = new Vector3F();
         private float m_snapGridSize = 1.0F;
@@ -258,6 +258,16 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
                         break;
                 }
             }
+        }
+
+        @Override
+        public void onKeyEvent(InputKeyEvent event) {
+            keyEvent(event);
+        }
+
+        @Override
+        public void onMouseEvent(InputMouseEvent event) {
+            mouseEvent(event);
         }
 
         @Override
