@@ -210,7 +210,7 @@ public class CameraBehaviorInjector extends BasicBehaviorInjector {
         @Override
         public void update(int deltaTime) {
             if (!m_cameraMovement.isZero()) {
-                m_camera.move(m_cameraMovement.normalize().multiply(deltaTime / 200.0F * m_snapGridSize * 50));
+                m_camera.move(m_cameraMovement.normalize().multiply(deltaTime / 200.0F * m_snapGridSize * (1.0f / m_camera.getZoom()) * 30));
             }
         }
 
