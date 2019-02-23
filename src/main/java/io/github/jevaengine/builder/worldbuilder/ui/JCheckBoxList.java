@@ -8,7 +8,7 @@ import javax.swing.border.*;
 import java.awt.event.*;
 
 @SuppressWarnings("serial")
-public class JCheckBoxList extends JList<JCheckBox> {
+public class JCheckBoxList<T extends Comparable<T>> extends JList<JCheckBoxList.Datum<T>> {
     protected static Border noFocusBorder = new EmptyBorder(1, 1, 1, 1);
 
     public JCheckBoxList() {
@@ -17,7 +17,7 @@ public class JCheckBoxList extends JList<JCheckBox> {
             public void mousePressed(MouseEvent e) {
                 int index = locationToIndex(e.getPoint());
                 if (index != -1) {
-                    JCheckBox checkbox = (JCheckBox) getModel().getElementAt(index);
+                    JCheckBox checkbox = (JCheckBox) getModel().getElementAt(index).checkBox;
                     checkbox.setSelected(!checkbox.isSelected());
                     repaint();
                 }
@@ -26,16 +26,15 @@ public class JCheckBoxList extends JList<JCheckBox> {
         setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
-    public JCheckBoxList(ListModel<JCheckBox> model){
+    public JCheckBoxList(ListModel<Datum<T>> model){
         this();
         setModel(model);
     }
 
-    protected class CellRenderer implements ListCellRenderer<JCheckBox> {
-        public Component getListCellRendererComponent(
-                JList<? extends JCheckBox> list, JCheckBox value, int index,
-                boolean isSelected, boolean cellHasFocus) {
-            JCheckBox checkbox = value;
+    protected class CellRenderer<T extends Comparable<T>> implements ListCellRenderer<Datum<T>> {
+        @Override
+        public Component getListCellRendererComponent(JList<? extends Datum<T>> jList, Datum<T> value, int i, boolean isSelected, boolean b1) {
+            JCheckBox checkbox = value.checkBox;
 
             //Drawing checkbox, change the appearance here
             checkbox.setBackground(isSelected ? getSelectionBackground()
@@ -49,6 +48,24 @@ public class JCheckBoxList extends JList<JCheckBox> {
             checkbox.setBorder(isSelected ? UIManager
                     .getBorder("List.focusCellHighlightBorder") : noFocusBorder);
             return checkbox;
+        }
+    }
+
+    public static class Datum<T extends Comparable<T>> implements Comparable<Datum<T>> {
+        private JCheckBox checkBox;
+        public T info;
+
+        public Datum(T info, boolean checked) {
+            this.checkBox = new JCheckBox();
+            this.checkBox.setLabel(info.toString());
+            this.info = info;
+
+            this.checkBox.setSelected(checked);
+        }
+
+        @Override
+        public int compareTo(Datum<T> tDatum) {
+            return info.compareTo(tDatum.info);
         }
     }
 }

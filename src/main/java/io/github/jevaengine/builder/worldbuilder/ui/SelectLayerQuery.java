@@ -31,7 +31,7 @@ public class SelectLayerQuery extends javax.swing.JFrame {
 
 	private final Object m_sync = new Object();
 
-	private final SortedListModel<Layer> m_layersModel;
+	private final SortedListModel<JCheckBoxList.Datum<Layer>> m_layersModel;
 
 	private final EditorWorld m_world;
 
@@ -41,10 +41,8 @@ public class SelectLayerQuery extends javax.swing.JFrame {
 		m_world = world;
 		m_layersModel = new SortedListModel<>();
 
-		m_layersModel.add(new Layer(NAME_DISABLED, 0));
-
 		for(Map.Entry<String, Float> e : layers.entrySet()) {
-			m_layersModel.add(new Layer(e.getKey(), e.getValue()));
+			m_layersModel.add(new JCheckBoxList.Datum<>(new Layer(e.getKey(), e.getValue()), true));
 		}
 
 
@@ -60,7 +58,7 @@ public class SelectLayerQuery extends javax.swing.JFrame {
 			if(index < 0)
 				return;
 
-			Layer l = m_layersModel.getElementAt(index);
+			Layer l = m_layersModel.getElementAt(index).info;
 			if(l.name.compareTo(NAME_DISABLED) == 0)
 				return;
 
@@ -86,7 +84,7 @@ public class SelectLayerQuery extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-		browseLayers = new javax.swing.JList<>();
+		browseLayers = new JCheckBoxList<Layer>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -131,7 +129,7 @@ public class SelectLayerQuery extends javax.swing.JFrame {
     }//GEN-LAST:event_lstDirectionActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JList<Layer> browseLayers;
+    private JCheckBoxList<Layer> browseLayers;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 
