@@ -35,6 +35,8 @@ public class SelectLayerQuery extends javax.swing.JFrame {
 
 	private final EditorWorld m_world;
 
+	private int lastSelectedLayer = 0;
+
 	public SelectLayerQuery(Map<String, Float> layers, EditorWorld world) {
 		initComponents();
 
@@ -47,6 +49,11 @@ public class SelectLayerQuery extends javax.swing.JFrame {
 
 
 		browseLayers.setModel(m_layersModel);
+
+		if(!layers.isEmpty()) {
+			browseLayers.setSelectedIndex(0);
+			lastSelectedLayer = 0;
+		}
 	}
 
 	public void poll()
@@ -58,25 +65,51 @@ public class SelectLayerQuery extends javax.swing.JFrame {
 			if(index < 0)
 				return;
 
-			Layer l = m_layersModel.getElementAt(index).info;
-			if(l.name.compareTo(NAME_DISABLED) == 0)
-				return;
+			if(index != lastSelectedLayer) {
+				lastSelectedLayer = index;
+				Layer l = m_layersModel.getElementAt(index).info;
+				if (l.name.compareTo(NAME_DISABLED) == 0)
+					return;
 
-			Vector3F location = m_world.getEditCursor().getLocation();
+				Vector3F location = m_world.getEditCursor().getLocation();
 
-			if(Math.abs(location.z - l.depth) > Vector2F.TOLERANCE) {
-				location.z = l.depth;
-				m_world.getEditCursor().setLocation(location);
+				if (Math.abs(location.z - l.depth) > Vector2F.TOLERANCE) {
+					location.z = l.depth;
+					m_world.getEditCursor().setLocation(location);
+				}
+			} else {
+				float curIndex = m_world.getEditCursor().getLocation().z;
+
+				Layer closest_layer = null;
+				float closest_distance = 0;
+				int closest_index = 0;
+				for(int i = 0; i < browseLayers.getModel().getSize(); i++) {
+					JCheckBoxList.Datum<Layer> d = browseLayers.getModel().getElementAt(i);
+					float distance = Math.abs(curIndex - d.info.depth);
+
+					if(closest_layer == null || closest_distance > distance) {
+						closest_distance = distance;
+						closest_layer = d.info;
+						closest_index= i;
+					}
+				}
+
+				if(closest_layer != null) {
+					Vector3F location = m_world.getEditCursor().getLocation();
+					location.z = closest_layer.depth;
+					m_world.getEditCursor().setLocation(location);
+					lastSelectedLayer = closest_index;
+					browseLayers.setSelectedIndex(closest_index);
+				}
 			}
 
 			m_world.clearHiddenLayers();
 			for(int i = 0; i < browseLayers.getModel().getSize(); i++) {
 				JCheckBoxList.Datum<Layer> d = browseLayers.getModel().getElementAt(i);
-				if(!d.isChecked()) {
+				if(!d.isChecked() && i != browseLayers.getSelectedIndex()) {
 					m_world.addHiddenLayer(d.info.depth);
 				}
 			}
-
 		}
 
 		m_lastSelectedModel = null;

@@ -52,16 +52,28 @@ public class EntityBehaviorInjector extends BasicBehaviorInjector {
 		m_camera = camera;
 	}
 
-    private void moveEntity(final IEntity entity) {
-	    moveEntity(entity, null);
+    private void moveEntity(final EditorEntity entity, boolean deleteOnCancel) {
+		m_world.getEditCursor().setLocation(entity.getLocation());
+	    moveEntity(entity, null, deleteOnCancel);
     }
 
-    private void moveEntity(final IEntity entity, @Nullable MoveEntityBrushBehaviour.IEntityMovementBrushBehaviorHandler movementHandler) {
-	    MoveEntityBrushBehaviour.IEntityMovementBrushBehaviorHandler handler = () -> {
+    private void moveEntity(final EditorEntity entity, @Nullable MoveEntityBrushBehaviour.IEntityMovementBrushBehaviorHandler movementHandler, boolean deleteOnCancel) {
+		m_world.getEditCursor().setLocation(entity.getLocation());
+		final Brush.IBrushBehaviorObserver changedObserver = (b) -> {
+			m_brush.getObservers().remove(this);
+	    	m_world.removeEntity(entity);
+
+		};
+
+		MoveEntityBrushBehaviour.IEntityMovementBrushBehaviorHandler handler = () -> {
+			m_brush.getObservers().remove(changedObserver);
 			m_brush.setBehaviour(new NullBrushBehaviour());
 		};
 
-		m_brush.setBehaviour(new MoveEntityBrushBehaviour(entity, movementHandler == null ? handler : movementHandler));
+		m_brush.setBehaviour(new MoveEntityBrushBehaviour(entity.getEntity(), movementHandler == null ? handler : movementHandler));
+
+		if(deleteOnCancel)
+			m_brush.getObservers().add(changedObserver);
 	}
 
 	private void copyEntity(final EditorEntity.DummyEntity sourceEntity, boolean chained) {
@@ -77,9 +89,9 @@ public class EntityBehaviorInjector extends BasicBehaviorInjector {
 		m_world.addEntity(clone);
 
 		if(chained)
-		    moveEntity(clone.getEntity(), () -> copyEntity(clone.getEntity(), true));
+		    moveEntity(clone, () -> copyEntity(clone.getEntity(), true), true);
 		else
-		    moveEntity(clone.getEntity());
+		    moveEntity(clone, true);
 	}
 
 	private EditorEntity createUnnamedEntity() {
@@ -129,7 +141,7 @@ public class EntityBehaviorInjector extends BasicBehaviorInjector {
 			public void onCommand(String command) {
 				switch (command) {
 					case "Move Entity":
-						moveEntity(entity);
+						moveEntity(entity.getEditorEntity(), false);
 						break;
                     case "Copy Entity":
                         copyEntity(entity, false);
