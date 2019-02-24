@@ -40,6 +40,8 @@ public class SelectLayerQuery extends javax.swing.JFrame {
 	public SelectLayerQuery(Map<String, Float> layers, EditorWorld world) {
 		initComponents();
 
+		setTitle("Select Layer");
+
 		m_world = world;
 		m_layersModel = new SortedListModel<>();
 

@@ -40,6 +40,8 @@ public class SelectBrushQuery extends javax.swing.JFrame {
 	
 	public SelectBrushQuery(File baseDirectory, Brush brush, ISceneModelFactory sceneModelFactory) {
 		initComponents();
+		setTitle("Select Brush");
+
 		lstDirection.setModel(new DefaultComboBoxModel<>(Direction.values()));
 		
 		m_brush = brush;
