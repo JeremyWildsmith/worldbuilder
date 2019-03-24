@@ -64,6 +64,7 @@ public class ZoneBehaviorInjector extends BasicBehaviorInjector {
 	private ConfigureZoneQueryFactory.ConfigureZoneQuery configureZone(final EditorZone base) {
 		try {
 			final ConfigureZoneQueryFactory.ConfigureZoneQuery query = new ConfigureZoneQueryFactory(m_windowManager, m_windowFactory, m_baseDir).create(base);
+			query.setTopMost(true);
 			query.getObservers().add(new ConfigureZoneQueryFactory.IConfigureZoneQueryObserver() {
 				@Override
 				public void delete() {

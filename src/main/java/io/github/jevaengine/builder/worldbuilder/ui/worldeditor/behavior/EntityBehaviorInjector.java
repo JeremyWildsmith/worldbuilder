@@ -111,6 +111,7 @@ public class EntityBehaviorInjector extends BasicBehaviorInjector {
 	private ConfigureEntityQueryFactory.ConfigureEntityQuery configureEntity(final EditorEntity base) {
 		try {
 			final ConfigureEntityQueryFactory.ConfigureEntityQuery query = new ConfigureEntityQueryFactory(m_windowManager, m_windowFactory, m_baseDir).create(base);
+			query.setTopMost(true);
 			query.getObservers().add(new ConfigureEntityQueryFactory.IConfigureEntityQueryObserver() {
 				@Override
 				public void delete() {

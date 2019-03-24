@@ -18,6 +18,7 @@ import io.github.jevaengine.config.json.JsonVariable;
 import io.github.jevaengine.graphics.IFontFactory;
 import io.github.jevaengine.joystick.InputKeyEvent;
 import io.github.jevaengine.joystick.InputMouseEvent;
+import io.github.jevaengine.math.Rect3F;
 import io.github.jevaengine.math.Vector2D;
 import io.github.jevaengine.ui.*;
 import io.github.jevaengine.util.Observers;
@@ -83,7 +84,9 @@ public class CommandBehaviourInjector extends BasicBehaviorInjector {
 		for (int i = 0;; i++) {
 			String name = "Unnamed" + i;
 			if (!usedNames.contains(name)) {
-				return new EditorZone(m_fontFactory, name);
+				EditorZone z = new EditorZone(m_fontFactory, name);
+				z.setBounds(new Rect3F(1,1,0));
+				return z;
 			}
 		}
 	}
@@ -268,6 +271,7 @@ public class CommandBehaviourInjector extends BasicBehaviorInjector {
 			public void onPress() {
 				try {
 					final FileInputQueryFactory.FileInputQuery query = new FileInputQueryFactory(m_windowManager, m_windowFactory, m_baseDirectory).create(FileInputQueryFactory.FileInputQueryMode.SaveFile, "World Save Location", m_baseDirectory);
+					query.setTopMost(true);
 					query.getObservers().add(new FileInputQueryFactory.IFileInputQueryObserver() {
 						@Override
 						public void okay(URI input) {

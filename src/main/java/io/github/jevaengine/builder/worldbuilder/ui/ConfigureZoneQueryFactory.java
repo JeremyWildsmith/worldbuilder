@@ -106,6 +106,10 @@ public final class ConfigureZoneQueryFactory
 		{
 			return m_observers;
 		}
+
+		public void setTopMost(boolean b) {
+			m_window.setTopMost(b);
+		}
 	}
 	
 	private class ConfigureZoneQueryBehaviourInjector extends WindowBehaviourInjector

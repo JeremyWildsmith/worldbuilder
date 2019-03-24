@@ -46,6 +46,7 @@ public abstract class BasicBehaviorInjector extends WindowBehaviourInjector {
 	protected final void displayTextInput(String query, String value, final ITextInputQueryObserver observer) {
 		try {
 			final TextInputQuery window = new TextInputQueryFactory(m_windowManager, m_windowFactory).create(query, value);
+			window.setTopMost(true);
 			window.getObservers().add(new ITextInputQueryObserver() {
 				@Override
 				public void okay(String input) {
