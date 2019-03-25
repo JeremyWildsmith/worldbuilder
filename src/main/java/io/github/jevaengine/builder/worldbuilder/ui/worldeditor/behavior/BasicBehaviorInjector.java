@@ -32,6 +32,7 @@ public abstract class BasicBehaviorInjector extends WindowBehaviourInjector {
 	protected final void displayMessage(String message) {
 		try {
 			final MessageBoxFactory.MessageBox msgBox = new MessageBoxFactory(m_windowManager, m_windowFactory).create(message);
+			msgBox.setTopMost(true);
 			msgBox.getObservers().add(new MessageBoxFactory.IMessageBoxObserver() {
 				@Override
 				public void okay() {

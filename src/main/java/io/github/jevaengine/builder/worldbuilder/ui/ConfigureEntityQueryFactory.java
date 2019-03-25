@@ -286,7 +286,7 @@ public final class ConfigureEntityQueryFactory
 					try
 					{
 						final FileInputQuery query = new FileInputQueryFactory(m_windowManager, m_windowFactory, m_base).create(FileInputQueryMode.OpenFile, "Entity Configuration", m_base);
-					
+						query.setTopMost(true);
 						query.getObservers().add(new IFileInputQueryObserver() {
 							
 							@Override
