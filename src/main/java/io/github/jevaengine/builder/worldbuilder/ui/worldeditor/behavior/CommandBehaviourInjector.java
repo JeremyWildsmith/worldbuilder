@@ -238,6 +238,7 @@ public class CommandBehaviourInjector extends BasicBehaviorInjector {
 								query.dispose();
 							} catch (IWeatherFactory.WeatherConstructionException e) {
 								displayMessage("Error constructing world weather. Either due to the fact that is it not properly formatted, or it does not exist.");
+								m_logger.error("Error constructing weather", e);
 							}
 						}
 
@@ -246,6 +247,7 @@ public class CommandBehaviourInjector extends BasicBehaviorInjector {
 							query.dispose();
 						}
 					});
+					query.setTopMost(true);
 				} catch (IWindowFactory.WindowConstructionException e) {
 					m_logger.error("Unable to construct text input dialogue for depth adjust", e);
 				}
